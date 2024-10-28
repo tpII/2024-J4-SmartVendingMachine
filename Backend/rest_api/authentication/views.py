@@ -183,33 +183,3 @@ class GoogleAuthCallbackView(APIView):
         print(f"User info received: {user_info}")
 
         return Response(user_info)
-
-import mercadopago
-from django.conf import settings
-from django.http import JsonResponse
-
-def create_preference(request):
-    sdk = mercadopago.SDK(settings.MERCADOPAGO_ACCESS_TOKEN)
-    preference_data = {
-        "items": [
-            {
-                "title": "Franui",
-                "quantity": 1,
-                "currency_id": "ARS",  
-                "unit_price": 100.0
-            }
-        ],
-        "back_urls": {
-            "success": "http://localhost:8000/success",
-            "failure": "http://localhost:8000/failure",
-            "pending": "http://localhost:8000/pending"
-        },
-        "auto_return": "approved"  
-    }
-
-    preference_response = sdk.preference().create(preference_data)
-    preference = preference_response["response"]
-
-    return JsonResponse({
-        "id": preference["id"]
-    })

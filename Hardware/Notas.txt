@@ -1,0 +1,23 @@
+
+
+PROPUESTA DE FUNCIONAMIENTO PARA RASPBERRY PI:
+
+1. La raspberry recibe un request con la sesion que se abrio
+    a. Almacena el id de sesion
+    b. Manda un impulso por el servomotor.
+    c. Se queda osiosa a que se prenda el sensor de cerrado.
+    d. Detecta que el sensor de cerrado se activo
+
+    -- DETECTA CON IA LOS PRODUCTOS EXTRAIDOS --
+    
+    e. Envia un request al server - POST /session/{id}/products
+        {
+            "raspberry-id": "id", 
+            "session-id": "id", 
+            "products": [
+                "product-id", 
+                "product-id-2", 
+                ...
+            ]
+        }
+    

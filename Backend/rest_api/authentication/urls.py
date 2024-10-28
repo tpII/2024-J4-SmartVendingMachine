@@ -8,5 +8,4 @@ urlpatterns = [
          name="login-with-google"),
       path('google-auth/', GoogleAuthRedirectApi.as_view(), name='google-auth'),
       path('google-auth/callback/', GoogleAuthCallbackView.as_view(), name='google-auth-callback'),
-      path('create_preference/', create_preference, name='create_preference'),
 ]

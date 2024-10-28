@@ -19,7 +19,7 @@ export default function Login() {
   const handleLogin = async () => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/login/`,
+        `${process.env.NEXT_PUBLIC_API_URL}api/login/`,
         {
           method: "POST",
           headers: {
@@ -36,7 +36,8 @@ export default function Login() {
         const data = await response.json();
 
         // Supongamos que el token está en data.token
-        Cookies.set("authToken", data.token, { expires: 7 }); // La cookie expira en 7 días
+        console.log(data)
+        Cookies.set("authToken", data.access, { expires: 7 }); // La cookie expira en 7 días
         alert("Login exitoso!");
         console.log("Login exitoso");
         window.location.href = "/";

@@ -17,7 +17,6 @@ from decouple import config
 BASE_FRONTEND_URL = config('DJANGO_BASE_FRONTEND_URL')
 GOOGLE_OAUTH2_CLIENT_ID = config('GOOGLE_OAUTH2_CLIENT_ID')
 GOOGLE_OAUTH2_CLIENT_SECRET = config('GOOGLE_OAUTH2_CLIENT_SECRET')
-#MERCADOPAGO_ACCESS_TOKEN = config('MERCADOPAGO_ACCESS_TOKEN')
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -52,6 +51,7 @@ DEFAULT_APPS = [
 
 CUSTOM_APPS = [
     "authentication",
+    "fridge",
 ]
 
 INSTALLED_APPS =  DEFAULT_APPS + CUSTOM_APPS
