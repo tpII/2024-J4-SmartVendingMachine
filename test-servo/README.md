@@ -1,0 +1,1 @@
+test2 y test3 son dos programas exactamente iguales pero con distinta configuración del control del servo, por lo que generan distintos angulos en el accionar del mismo.
