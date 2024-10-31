@@ -17,7 +17,7 @@ click-didyoumean==0.3.1
 click-plugins==1.1.1
 click-repl==0.3.0
 cryptography==43.0.0
-Django==5.0
+Django
 django-celery-results==2.5.1
 django-cors-headers==4.3.1
 django-redis==5.4.0
@@ -46,7 +46,7 @@ kombu==5.4.0
 mercadopago==2.2.3
 msgpack==1.0.8
 multidict==6.0.5
-numpy==2.1.0
+numpy
 phonenumbers==8.13.37
 pillow==10.3.0
 prompt_toolkit==3.0.47
@@ -65,7 +65,7 @@ pytz==2024.1
 redis==5.0.1
 requests==2.25.1
 rsa==4.9
-scipy==1.14.0
+scipy
 SecretStorage==3.3.1
 shapely==2.0.4
 six==1.16.0

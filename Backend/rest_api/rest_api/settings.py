@@ -52,6 +52,7 @@ DEFAULT_APPS = [
 CUSTOM_APPS = [
     "authentication",
     "fridge",
+    "CreditCard"
 ]
 
 INSTALLED_APPS =  DEFAULT_APPS + CUSTOM_APPS

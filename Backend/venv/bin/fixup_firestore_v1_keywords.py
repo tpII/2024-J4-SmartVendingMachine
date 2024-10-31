@@ -1,4 +1,4 @@
-#!/home/tom/universidad/smart-fridge/Backend/venv/bin/python3
+#!/Users/leesan/Documents/GitHub/2024-J4-SmartVendingMachine/Backend/venv/bin/python3
 # -*- coding: utf-8 -*-
 # Copyright 2024 Google LLC
 #
