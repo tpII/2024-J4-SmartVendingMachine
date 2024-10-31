@@ -55,6 +55,8 @@ CUSTOM_APPS = [
     "CreditCard"
 ]
 
+
+
 INSTALLED_APPS =  DEFAULT_APPS + CUSTOM_APPS
 
 MIDDLEWARE = [
@@ -126,6 +128,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+    
 }
 
 

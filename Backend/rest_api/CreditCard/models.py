@@ -15,7 +15,4 @@ class CreditCard(models.Model):
         return f"{self.card_holder_name} - {self.card_number[-4:]}"
 
 # Signal to ensure at least one credit card is associated with each user
-@receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def ensure_credit_card(sender, instance, **kwargs):
-    if not instance.credit_cards.exists():  # Revisa si el usuario no tiene tarjetas
-        raise ValidationError("Each user must have at least one associated credit card.")
+
