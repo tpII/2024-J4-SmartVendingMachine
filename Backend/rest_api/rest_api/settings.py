@@ -52,7 +52,10 @@ DEFAULT_APPS = [
 CUSTOM_APPS = [
     "authentication",
     "fridge",
+    "CreditCard"
 ]
+
+
 
 INSTALLED_APPS =  DEFAULT_APPS + CUSTOM_APPS
 
@@ -125,6 +128,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+    
 }
 
 

@@ -6,7 +6,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-
+from rest_framework.permissions import IsAuthenticated
+from CreditCard.serializers import CreditCardSerializer
+import CreditCard
 from urllib.parse import urlencode
 
 from authentication.models import User
@@ -183,3 +185,4 @@ class GoogleAuthCallbackView(APIView):
         print(f"User info received: {user_info}")
 
         return Response(user_info)
+    
