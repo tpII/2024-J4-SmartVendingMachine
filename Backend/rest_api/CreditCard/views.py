@@ -41,3 +41,12 @@ class CreditCardDeleteView(APIView):
             return Response({"error": "Credit card not found"}, status=status.HTTP_404_NOT_FOUND)
         except ValidationError as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+class AllCreditCardsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        # Obtener todas las tarjetas asociadas al usuario autenticado
+        user_credit_cards = CreditCard.objects.filter(user=request.user)
+        serializer = CreditCardSerializer(user_credit_cards, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
