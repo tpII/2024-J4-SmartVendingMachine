@@ -1,2 +1,4 @@
 
 /Backend/venv
+*.pyc
+*.pyc
