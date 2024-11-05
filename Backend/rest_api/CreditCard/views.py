@@ -7,16 +7,24 @@ from .serializers import CreditCardSerializer
 from django.core.exceptions import ValidationError
 
 class CreditCardCreateView(APIView):
-    
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        # Validar que el usuario tenga al menos una tarjeta después de crearla
-        serializer = CreditCardSerializer(data=request.data)
+        # Verificar si el usuario ya tiene otras tarjetas
+        has_other_cards = CreditCard.objects.filter(user=request.user).exists()
+        
+        favourite_value = not has_other_cards
+        data = request.data.copy()
+        data['favourite'] = not has_other_cards  # True si no tiene otras tarjetas, False en caso contrario
+        
+        # Crear el serializador con los datos de la solicitud
+        serializer = CreditCardSerializer(data=data)
         if serializer.is_valid():
-            credit_card = serializer.save(user=request.user)
+            # Asignar `favourite` automáticamente sin depender de la solicitud
+            credit_card = serializer.save(user=request.user, favourite=favourite_value)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
 
 
 class HasCreditCardView(APIView):
@@ -50,3 +58,32 @@ class AllCreditCardsView(APIView):
         user_credit_cards = CreditCard.objects.filter(user=request.user)
         serializer = CreditCardSerializer(user_credit_cards, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class AddFavouriteCardView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        # Obtener el ID de la tarjeta desde los datos de la solicitud
+        card_id = request.data.get('id')
+        if not card_id:
+            return Response({'error': 'No ID provided'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            # Verificar que la tarjeta pertenece al usuario autenticado
+            card_to_favourite = CreditCard.objects.get(id=card_id, user=request.user)
+            
+            # Desactivar 'favourite' en todas las otras tarjetas del usuario
+            CreditCard.objects.filter(user=request.user).update(favourite=False)
+            
+            # Activar 'favourite' en la tarjeta especificada
+            card_to_favourite.favourite = True
+            card_to_favourite.save()
+            
+            # Serializar y devolver las tarjetas actualizadas del usuario
+            user_credit_cards = CreditCard.objects.filter(user=request.user)
+            serializer = CreditCardSerializer(user_credit_cards, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        except CreditCard.DoesNotExist:
+            return Response({'error': 'Card not found or does not belong to user'}, status=status.HTTP_404_NOT_FOUND)

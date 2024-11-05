@@ -6,7 +6,7 @@ class CreditCardSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CreditCard
-        fields = ['id', 'user', 'card_number', 'expiration_date', 'cvv', 'card_holder_name']
+        fields = ['id', 'user', 'card_number', 'expiration_date', 'cvv', 'card_holder_name', 'favourite']
         read_only_fields = ['user']
 
     def to_representation(self, instance):

@@ -10,6 +10,7 @@ class CreditCard(models.Model):
     expiration_date = models.DateField()
     cvv = models.CharField(max_length=4)
     card_holder_name = models.CharField(max_length=100)
+    favourite = models.BooleanField()
 
     def __str__(self):
         return f"{self.card_holder_name} - {self.card_number[-4:]}"

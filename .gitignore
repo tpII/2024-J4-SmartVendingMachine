@@ -1,6 +1,9 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
+Frontend/node_modules/
+Frontend/.next/
+
 /node_modules
 /.pnp
 .pnp.js
@@ -44,8 +47,8 @@ __pycache__/
 *.sqlite3
 
 # Entorno virtual (venv) en el directorio backend
-backend/venv/
-backend/env/
+Backend/venv/
+Backend/env/
 env/
 venv/
 

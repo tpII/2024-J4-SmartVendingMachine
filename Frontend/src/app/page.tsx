@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -62,6 +62,36 @@ interface FoodItem {
 export default function SmartFridgeEcommerce() {
   const [activeTab, setActiveTab] = useState("browse");
 
+  useEffect(() => {
+    const checkUserCard = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}payment/check-card/`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${Cookies.get("authToken")}`, // Usa el token guardado en cookies
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (!response.ok) {
+          throw new Error("Error en la respuesta de la API");
+        }
+
+        const data = await response.json();
+        if (!data.has_card) {
+          window.location.href = "/add-card";
+        } else {
+          console.error("El usuario tiene tarjeta...");
+        }
+      } catch (error) {
+        console.error("Error en la petición", error);
+      }
+    };
+    checkUserCard();
+  }, []);
+
   const handleLogout = () => {
     // Eliminar todas las cookies
     const allCookies = Cookies.get(); // Obtener todas las cookies actuales
@@ -73,6 +103,10 @@ export default function SmartFridgeEcommerce() {
     window.location.href = "/login";
   };
 
+  const handleAddCreditCard = () => {
+    window.location.href = "/cards";
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
       <header className="bg-white shadow-sm">
@@ -81,6 +115,10 @@ export default function SmartFridgeEcommerce() {
             Smart Fridge Eats
           </h1>
           <div className="flex items-center space-x-4">
+            <Button variant="ghost" onClick={handleAddCreditCard}>
+              <Card className="mr-2 h-4 w-4" />
+              Credit Cards
+            </Button>
             <Button variant="ghost" onClick={handleLogout}>
               <User className="mr-2 h-4 w-4" />
               Logout
