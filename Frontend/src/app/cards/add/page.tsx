@@ -1,8 +1,14 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import React, { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import { User } from "lucide-react";
@@ -15,9 +21,46 @@ function SimulatedCreditCardForm() {
     expirationDate: "",
     cvv: "",
   });
+  const [showExplanation, setShowExplanation] = useState(false)
+
+  // Si se redirige desde el home, significa que el usuario recien crea su cuenta y todavia no tiene 
+  // una tarjeta cargada, por lo que mostramos un mensaje explicativo
+  useEffect(() => {
+    // Obtener el valor del parámetro homeRedirect de la URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const homeRedirect = urlParams.get("homeRedirect");
+  
+    // Verificar si el parámetro homeRedirect existe y es 'true'
+    if (homeRedirect === "true") {
+      // Mostramos el mensaje
+      setShowExplanation(true);
+    } else {
+      // No lo mostramos
+      setShowExplanation(false);
+    }
+
+  })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    if (name === "cardNumber") {
+      // Remove any non-digit characters
+      const digits = value.replace(/\D/g, "");
+      // Add a space every 4 characters
+      const formatted = digits.replace(/(\d{4})(?=\d)/g, "$1 ").trim();
+      // Limit to 19 characters (16 digits + 3 spaces)
+      setForm((prev) => ({ ...prev, [name]: formatted.slice(0, 19) }));
+    } else if (name === "expirationDate") {
+      // Format as MM/YY
+      const formatted = value
+        .replace(/\D/g, "")
+        .replace(/^(\d{2})/, "$1/")
+        .slice(0, 5);
+      setForm((prev) => ({ ...prev, [name]: formatted }));
+    } else {
+      setForm((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -27,6 +70,9 @@ function SimulatedCreditCardForm() {
     // Convertir expirationDate a formato YYYY-MM-DD
     const [month, year] = form.expirationDate.split("/");
     const formattedExpirationDate = `20${year}-${month}`; // Asumiendo que el formato es MM/YY y que el día es el primero del mes
+
+    let string = form.cardNumber; // Suponiendo que 'form.cardNumber' es el valor que contiene la cadena
+    let stringSinEspacios = string.replace(/\s+/g, "");
 
     try {
       console.log(Cookies.get("authToken"));
@@ -40,7 +86,7 @@ function SimulatedCreditCardForm() {
           },
           body: JSON.stringify({
             card_holder_name: form.cardHolderName,
-            card_number: form.cardNumber,
+            card_number: stringSinEspacios,
             expiration_date: formattedExpirationDate,
             cvv: form.cvv,
           }),
@@ -76,12 +122,15 @@ function SimulatedCreditCardForm() {
     window.location.href = "/login";
   };
 
+  const goHome = () => {
+    window.location.href = "/";
+  }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100" >
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-2xl font-bold text-gray-900" onClick={goHome}>
             Smart Fridge Eats
           </h1>
           <div className="flex items-center space-x-4">
@@ -95,14 +144,26 @@ function SimulatedCreditCardForm() {
       <main>
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
           <form onSubmit={handleSubmit}>
-            <Card className="w-96 p-4">
+            <Card className="w-96 p-7">
               <CardHeader>
                 <CardTitle>Información de Tarjeta de Crédito</CardTitle>
               </CardHeader>
+              { showExplanation ? <CardDescription >
+                Para completar tu registro y acceder a todas las funciones de
+                nuestra aplicación, es necesario ingresar los datos de tu
+                tarjeta de crédito. Esto es indispensable para realizar la
+                compra de productos dentro de la plataforma. Aseguramos que tus
+                datos estarán completamente protegidos, y que solo se utilizarán
+                para procesar las transacciones de compra. Una vez ingresados
+                los datos, podrás disfrutar de todas las funcionalidades y
+                productos disponibles en nuestra aplicación de manera rápida y
+                segura. ¡Gracias por elegirnos!
+              </CardDescription> : null }
+              <p>-</p>
               <CardContent className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
-                    Nombre del Titular
+                    Nombre completo del titular
                   </label>
                   <input
                     type="text"

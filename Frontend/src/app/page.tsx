@@ -81,7 +81,7 @@ export default function SmartFridgeEcommerce() {
 
         const data = await response.json();
         if (!data.has_card) {
-          window.location.href = "/add-card";
+          window.location.href = "/cards/add?homeRedirect=true";
         } else {
           console.error("El usuario tiene tarjeta...");
         }
