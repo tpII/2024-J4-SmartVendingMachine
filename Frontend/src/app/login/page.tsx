@@ -35,9 +35,9 @@ export default function Login() {
       if (response.ok) {
         const data = await response.json();
 
-        // Supongamos que el token está en data.token
+        // Supongamos que el token est en data.token
         console.log(data)
-        Cookies.set("authToken", data.access, { expires: 7 }); // La cookie expira en 7 días
+        Cookies.set("authToken", data.access, { expires: 7 }); // La cookie expira en 7 das
         alert("Login exitoso!");
         console.log("Login exitoso");
         window.location.href = "/";
@@ -47,7 +47,7 @@ export default function Login() {
       }
     } catch (error) {
       alert("Hubo un error al iniciar sesion!");
-      console.error("Error en la petición", error);
+      console.error("Error en la peticion", error);
     }
   };
 
@@ -67,10 +67,10 @@ export default function Login() {
         const data = await response.json();
         window.location.href = data.google_login_url;
       } else {
-        console.error("Error al obtener la URL de autenticación de Google");
+        console.error("Error al obtener la URL de autenticacion de Google");
       }
     } catch (error) {
-      console.error("Error en la petición", error);
+      console.error("Error en la peticion", error);
     }
   };
 

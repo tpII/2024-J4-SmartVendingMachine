@@ -8,7 +8,7 @@ from django.core.exceptions import ValidationError
 class Product(models.Model):
     nombre = models.CharField(max_length=100)  # Nombre del producto
     precio = models.DecimalField(max_digits=10, decimal_places=2)  # Precio del producto
-    en_heladera = models.BooleanField(default=False)  # Si está o no en la heladera
+    en_heladera = models.BooleanField(default=False)  # Si est o no en la heladera
     
 
     def __str__(self):

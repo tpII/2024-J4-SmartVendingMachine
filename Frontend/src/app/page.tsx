@@ -30,7 +30,7 @@ const foodItems = [
     id: 1,
     name: "Fresh Salad",
     price: 8.99,
-    image: "/food-items/fresh_salad.jpg", // Ajustar extensión si no la tiene
+    image: "/food-items/fresh_salad.jpg", // Ajustar extension si no la tiene
   },
   {
     id: 2,
@@ -86,7 +86,7 @@ export default function SmartFridgeEcommerce() {
           console.error("El usuario tiene tarjeta...");
         }
       } catch (error) {
-        console.error("Error en la petición", error);
+        console.error("Error en la peticion", error);
       }
     };
     checkUserCard();
@@ -99,7 +99,7 @@ export default function SmartFridgeEcommerce() {
     for (let cookie in allCookies) {
       Cookies.remove(cookie);
     }
-    // Redirigir al usuario a la página de inicio de sesión
+    // Redirigir al usuario a la pgina de inicio de sesion
     window.location.href = "/login";
   };
 

@@ -17,7 +17,7 @@ from authentication.serializers import UserSerializer
 from .mixins import PublicApiMixin, ApiErrorsMixin
 from .utils import google_get_access_token, google_get_user_info
 from .serializers import UserRegistrationSerializer, CustomTokenObtainPairSerializer
-from .models import User  # Asegúrate de que tu modelo User esté importado
+from .models import User  # Asegúrate de que tu modelo User est importado
 
 import requests
 

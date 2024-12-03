@@ -20,13 +20,13 @@ class RaspberryPiSessionView(APIView):
         except RaspberryPi.DoesNotExist:
             return Response({"detail": "Raspberry Pi no encontrada"}, status=status.HTTP_404_NOT_FOUND)
 
-        # Verificar la existencia de la sesión de compra
+        # Verificar la existencia de la sesion de compra
         try:
             session = SesionCompra.objects.get(id=session_id)
         except SesionCompra.DoesNotExist:
-            return Response({"detail": "Sesión no encontrada"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"detail": "Sesion no encontrada"}, status=status.HTTP_404_NOT_FOUND)
 
-        # Agregar productos a la sesión
+        # Agregar productos a la sesion
         for product_id in product_ids:
             try:
                 producto = Producto.objects.get(id=product_id)
@@ -34,8 +34,8 @@ class RaspberryPiSessionView(APIView):
             except Producto.DoesNotExist:
                 return Response({"detail": f"Producto {product_id} no encontrado"}, status=status.HTTP_404_NOT_FOUND)
 
-        # Cambiar el estado de la sesión a false (cerrada)
+        # Cambiar el estado de la sesion a false (cerrada)
         session.estado = False
         session.save()
 
-        return Response({"detail": "Productos añadidos y sesión actualizada"}, status=status.HTTP_200_OK)
+        return Response({"detail": "Productos aadidos y sesion actualizada"}, status=status.HTTP_200_OK)

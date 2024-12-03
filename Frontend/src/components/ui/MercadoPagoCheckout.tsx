@@ -11,7 +11,7 @@ const MercadoPagoCheckout = () => {
       script.src = 'https://sdk.mercadopago.com/js/v2';
       script.async = true;
       script.onload = () => {
-        console.log("MercadoPago cargado: ", window.MercadoPago); // Verifica si el script está cargado
+        console.log("MercadoPago cargado: ", window.MercadoPago); // Verifica si el script est cargado
   
         if (preferenceId) {
           const mp = new window.MercadoPago('APP_USR-fa852683-3af5-4c37-8d91-765dc0a68c19', {

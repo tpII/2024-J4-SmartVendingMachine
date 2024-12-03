@@ -52,7 +52,7 @@ Backend/env/
 env/
 venv/
 
-# Configuración Django
+# Configuracion Django
 db.sqlite3
 *.sqlite3
 *.log

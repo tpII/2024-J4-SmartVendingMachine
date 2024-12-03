@@ -14,7 +14,7 @@ class ProductCreateView(APIView):
 
     
     def post(self, request):
-        # Validar que el usuario tenga al menos una tarjeta después de crearla
+        # Validar que el usuario tenga al menos una tarjeta despus de crearla
         serializer = ProductSerializer(data=request.data)
         if serializer.is_valid():
             product = serializer.save(user=request.user)
@@ -26,7 +26,7 @@ class ToggleEnHeladeraView(APIView):
     permission_classes = [IsAuthenticated]  # Asegura que solo usuarios autenticados puedan cambiar el estado
 
     def patch(self, request, pk):
-        # Obtén el producto por su ID (pk) o devuelve 404 si no se encuentra
+        # Obtn el producto por su ID (pk) o devuelve 404 si no se encuentra
         producto = get_object_or_404(Product, pk=pk)
         
         # Cambia el estado de en_heladera
@@ -41,13 +41,13 @@ class DeleteProductView(APIView):
     permission_classes = [IsAuthenticated]  # Asegura que solo usuarios autenticados puedan eliminar
 
     def delete(self, request, pk):
-        # Obtén el producto por su ID (pk) o devuelve 404 si no se encuentra
+        # Obtn el producto por su ID (pk) o devuelve 404 si no se encuentra
         producto = get_object_or_404(Product, pk=pk)
         
         # Elimina el producto
         producto.delete()
         
-        # Retorna una respuesta de éxito
+        # Retorna una respuesta de xito
         return Response({"message": "Producto eliminado exitosamente"}, status=status.HTTP_204_NO_CONTENT)
 
 class CheckStock(APIView):
@@ -55,5 +55,5 @@ class CheckStock(APIView):
 
     def get(self, request, pk):
         producto = get_object_or_404(Product, pk=pk)
-        # Devuelve el estado de en_heladera para verificar si el producto está en stock
+        # Devuelve el estado de en_heladera para verificar si el producto est en stock
         return Response({"en_heladera": producto.en_heladera}, status=status.HTTP_200_OK)

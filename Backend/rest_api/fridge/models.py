@@ -2,7 +2,7 @@ from django.db import models
 from authentication.models import User
 
 class Heladera(models.Model):
-    id = models.AutoField(primary_key=True)  # ID numérico que comienza en 1
+    id = models.AutoField(primary_key=True)  # ID numrico que comienza en 1
     latitud = models.DecimalField(max_digits=15, decimal_places=13)
     longitud = models.DecimalField(max_digits=15, decimal_places=13)
     
@@ -26,7 +26,7 @@ class SesionCompra(models.Model):
     estado = models.BooleanField(default=True)
     
     def __str__(self):
-        return f"Sesión de compra {self.id} de {self.usuario.username} en Heladera {self.heladera.id}"
+        return f"Sesiin de compra {self.id} de {self.usuario.username} en Heladera {self.heladera.id}"
 
 class ProductoCompra(models.Model):
     sesion = models.ForeignKey(SesionCompra, related_name='productos', on_delete=models.CASCADE)
@@ -34,4 +34,4 @@ class ProductoCompra(models.Model):
     cantidad = models.PositiveIntegerField()
 
     def __str__(self):
-        return f"{self.cantidad} x {self.producto.nombre} en Sesión {self.sesion.id}"
+        return f"{self.cantidad} x {self.producto.nombre} en Sesion {self.sesion.id}"

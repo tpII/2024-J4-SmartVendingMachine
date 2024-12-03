@@ -18,13 +18,13 @@ while True:
         print("Finalizando Dispositivo B.")
         break
     sender.send_string(message_to_send)
-    print("Dispositivo B enviÃ³:", message_to_send)
+    print("Dispositivo B envio:", message_to_send)
 
     # Intentar recibir mensaje de Dispositivo A (de manera no bloqueante)
     try:
         message_received = receiver.recv_string(flags=zmq.NOBLOCK)
-        print("Dispositivo B recibiÃ³:", message_received)
+        print("Dispositivo B recibio:", message_received)
     except zmq.Again:
         pass  # No hay mensajes nuevos, continuar el loop
 
-    time.sleep(1)  # Pausa de 1 segundo antes de la prÃ³xima iteraciÃ³n
+    time.sleep(1)  # Pausa de 1 segundo antes de la proxima iteracion

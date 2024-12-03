@@ -6,7 +6,7 @@ const handleGoogleCallback = async () => {
   const code = urlParams.get('code');
 
   if (code) {
-    // Enviar el código al backend para obtener la información del usuario
+    // Enviar el codigo al backend para obtener la informacion del usuario
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login/google/`, {
       method: 'POST',
       headers: {
@@ -17,20 +17,20 @@ const handleGoogleCallback = async () => {
 
     if (response.ok) {
       const userInfo = await response.json();
-      console.log('Información del usuario:', userInfo);
-      // Aquí puedes almacenar la información del usuario en el estado de tu aplicación o en cookies
+      console.log('Informacion del usuario:', userInfo);
+      // Aqu puedes almacenar la informacion del usuario en el estado de tu aplicacion o en cookies
     } else {
-      console.error('Error al obtener la información del usuario');
+      console.error('Error al obtener la informacion del usuario');
     }
   }
 };
 
 export default function SmartFridgeEcommerce() {
   useEffect(() => {
-    // Ejecutar el callback de Google automáticamente al montar el componente
+    // Ejecutar el callback de Google automticamente al montar el componente
     handleGoogleCallback();
     
-  }, []); // El array vacío significa que solo se ejecutará una vez al montar
+  }, []); // El array vaco significa que solo se ejecutar una vez al montar
 
   return (
     <div className="min-h-screen bg-gray-100">

@@ -44,8 +44,8 @@ export default function Login() {
         const data = await response.json();
         console.log(response)
 
-        // Supongamos que el token está en data.token
-        Cookies.set("authToken", data.token, { expires: 7 }); // La cookie expira en 7 días
+        // Supongamos que el token est en data.token
+        Cookies.set("authToken", data.token, { expires: 7 }); // La cookie expira en 7 das
         alert("Sign up exitoso, puede iniciar sesion!");
         window.location.href = "/login";
         console.log("Sign up exitoso");
@@ -54,7 +54,7 @@ export default function Login() {
         console.error("Error en el sign up");
       }
     } catch (error) {
-      console.error("Error en la petición", error);
+      console.error("Error en la peticion", error);
     }
   };
 

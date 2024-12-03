@@ -30,7 +30,7 @@ type CreditCard = {
   favourite: boolean;
 };
 
-// Componente de lista de tarjetas de crédito
+// Componente de lista de tarjetas de crdito
 function CreditCardList() {
   const [cards, setCards] = useState<CreditCard[]>([]);
 
@@ -56,7 +56,7 @@ function CreditCardList() {
         console.log(data);
         setCards(data);
       } catch (error) {
-        console.error("Error en la petición:", error);
+        console.error("Error en la peticion:", error);
       }
     };
 
@@ -78,7 +78,7 @@ function CreditCardList() {
     for (let cookie in allCookies) {
       Cookies.remove(cookie);
     }
-    // Redirigir al usuario a la página de inicio de sesión
+    // Redirigir al usuario a la pgina de inicio de sesion
     window.location.href = "/login";
   };
 
@@ -201,7 +201,7 @@ function SetDefaultCardButton({ cardId }: { cardId: number }) {
   );
 }
 
-// Componente principal de la página
+// Componente principal de la pgina
 export default function CreditCardsPage() {
   const handleLogout = () => {
     // Eliminar todas las cookies
@@ -210,7 +210,7 @@ export default function CreditCardsPage() {
     for (let cookie in allCookies) {
       Cookies.remove(cookie);
     }
-    // Redirigir al usuario a la página de inicio de sesión
+    // Redirigir al usuario a la pgina de inicio de sesion
     window.location.href = "/login";
   };
 

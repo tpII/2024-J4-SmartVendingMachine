@@ -1,13 +1,13 @@
 # Smart Fridge
 
-**Smart Fridge** es una aplicación de código abierto diseñada para gestionar y optimizar la compra de alimentos en refrigeradores comunitarios ubicados en áreas de alta afluencia. A través de la aplicación, los usuarios pueden adquirir productos dentro del refrigerador mediante una plataforma de Ecommerce. Una vez completada la compra, el refrigerador se desbloquea, permitiendo el acceso al artículo adquirido. Utilizamos un sistema de cámaras y tecnología de inteligencia artificial para monitorear las extracciones y garantizar que coincidan con las compras realizadas, lo que permite el débito automático en la tarjeta del usuario por el producto retirado.
+**Smart Fridge** es una aplicacion de codigo abierto diseada para gestionar y optimizar la compra de alimentos en refrigeradores comunitarios ubicados en reas de alta afluencia. A travs de la aplicacion, los usuarios pueden adquirir productos dentro del refrigerador mediante una plataforma de Ecommerce. Una vez completada la compra, el refrigerador se desbloquea, permitiendo el acceso al artculo adquirido. Utilizamos un sistema de cmaras y tecnologa de inteligencia artificial para monitorear las extracciones y garantizar que coincidan con las compras realizadas, lo que permite el dbito automtico en la tarjeta del usuario por el producto retirado.
 
 
-Este proyecto fue presentado por **Aldana Tedesco**, **Emiliano Mengoni**, **Lisandro Vicens**, y **Tomás Schattmann**. El backend está desarrollado en **Django Rest Framework** y el frontend utiliza **Next.js** con **React**.
+Este proyecto fue presentado por **Aldana Tedesco**, **Emiliano Mengoni**, **Lisandro Vicens**, y **Toms Schattmann**. El backend est desarrollado en **Django Rest Framework** y el frontend utiliza **Next.js** con **React**.
 
 ---
 
-## Instalación
+## Instalacion
 
 ### Requisitos previos
 - Python 3.8+
@@ -17,7 +17,7 @@ Este proyecto fue presentado por **Aldana Tedesco**, **Emiliano Mengoni**, **Lis
 
 ---
 
-### Instalación del Backend (Django Rest Framework)
+### Instalacion del Backend (Django Rest Framework)
 
 1. Clona el repositorio del proyecto:
 
@@ -48,7 +48,7 @@ Este proyecto fue presentado por **Aldana Tedesco**, **Emiliano Mengoni**, **Lis
 
         python manage.py migrate
 
-5. Crea un superusuario para acceder al panel de administración:
+5. Crea un superusuario para acceder al panel de administracion:
 
         python manage.py createsuperuser
 
@@ -56,10 +56,10 @@ Este proyecto fue presentado por **Aldana Tedesco**, **Emiliano Mengoni**, **Lis
 
         python manage.py runserver
 
-El backend estará corriendo en http://localhost:8000/.
+El backend estar corriendo en http://localhost:8000/.
 
 
-## Instalación del Frontend (Next.js con React)
+## Instalacion del Frontend (Next.js con React)
 
 1. Ve al directorio del frontend:
 
@@ -71,7 +71,7 @@ El backend estará corriendo en http://localhost:8000/.
 
 3. Configura las variables de entorno:
     
-    Crea un archivo .env en la raíz del proyecto con las siguientes variables:
+    Crea un archivo .env en la raz del proyecto con las siguientes variables:
 
         NEXT_PUBLIC_API_URL=http://localhost:8000/
 
@@ -79,17 +79,17 @@ El backend estará corriendo en http://localhost:8000/.
 
         npm run dev
 
-El frontend estará corriendo en http://localhost:3000/.
+El frontend estar corriendo en http://localhost:3000/.
 
 ## Uso
 
-Una vez que tanto el backend como el frontend estén en funcionamiento, puedes acceder a la aplicación desde http://localhost:3000. Si necesitas acceder al panel de administración de Django, ve a http://localhost:8000/admin e inicia sesión con el superusuario que creaste.
+Una vez que tanto el backend como el frontend estn en funcionamiento, puedes acceder a la aplicacion desde http://localhost:3000. Si necesitas acceder al panel de administracion de Django, ve a http://localhost:8000/admin e inicia sesion con el superusuario que creaste.
 
 
-## Contribución
+## Contribucion
 
-Este proyecto es de código abierto. Si quieres contribuir, por favor crea un fork del repositorio, realiza tus cambios y envía un pull request. Las contribuciones son bienvenidas.
+Este proyecto es de codigo abierto. Si quieres contribuir, por favor crea un fork del repositorio, realiza tus cambios y enva un pull request. Las contribuciones son bienvenidas.
 
 ## Licencia
 
-Smart Fridge es un proyecto de código abierto bajo la licencia MIT.
+Smart Fridge es un proyecto de codigo abierto bajo la licencia MIT.

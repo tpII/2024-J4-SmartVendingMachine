@@ -1,1 +1,1 @@
-Tener en cuenta que en estas pruebas se bloquea la comunicación debido a que espera a leer por teclado, quitando esa parte la comunicación es no bloqueante, por lo que con analizar si llego información nueva o no el nodo decide si decodificar y actuar o seguir su flujo normal.
+Tener en cuenta que en estas pruebas se bloquea la comunicacion debido a que espera a leer por teclado, quitando esa parte la comunicacion es no bloqueante, por lo que con analizar si llego informacion nueva o no el nodo decide si decodificar y actuar o seguir su flujo normal.

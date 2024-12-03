@@ -26,11 +26,11 @@ function SimulatedCreditCardForm() {
   // Si se redirige desde el home, significa que el usuario recien crea su cuenta y todavia no tiene 
   // una tarjeta cargada, por lo que mostramos un mensaje explicativo
   useEffect(() => {
-    // Obtener el valor del parámetro homeRedirect de la URL
+    // Obtener el valor del parmetro homeRedirect de la URL
     const urlParams = new URLSearchParams(window.location.search);
     const homeRedirect = urlParams.get("homeRedirect");
   
-    // Verificar si el parámetro homeRedirect existe y es 'true'
+    // Verificar si el parmetro homeRedirect existe y es 'true'
     if (homeRedirect === "true") {
       // Mostramos el mensaje
       setShowExplanation(true);
@@ -65,11 +65,11 @@ function SimulatedCreditCardForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Formulario enviado"); // <- Esto debería aparecer en la consola cuando envías el formulario.
+    console.log("Formulario enviado"); // <- Esto debera aparecer en la consola cuando envas el formulario.
 
     // Convertir expirationDate a formato YYYY-MM-DD
     const [month, year] = form.expirationDate.split("/");
-    const formattedExpirationDate = `20${year}-${month}`; // Asumiendo que el formato es MM/YY y que el día es el primero del mes
+    const formattedExpirationDate = `20${year}-${month}`; // Asumiendo que el formato es MM/YY y que el da es el primero del mes
 
     let string = form.cardNumber; // Suponiendo que 'form.cardNumber' es el valor que contiene la cadena
     let stringSinEspacios = string.replace(/\s+/g, "");
@@ -95,7 +95,7 @@ function SimulatedCreditCardForm() {
 
       if (response.ok) {
         alert("Tarjeta registrada exitosamente");
-        router.push("/cards"); // Redirige al login después de registrar la tarjeta
+        router.push("/cards"); // Redirige al login despus de registrar la tarjeta
       } else {
         const errorData = await response.json();
         console.error("Error al registrar la tarjeta:", errorData);
@@ -118,7 +118,7 @@ function SimulatedCreditCardForm() {
     for (let cookie in allCookies) {
       Cookies.remove(cookie);
     }
-    // Redirigir al usuario a la página de inicio de sesión
+    // Redirigir al usuario a la pgina de inicio de sesion
     window.location.href = "/login";
   };
 
@@ -146,17 +146,17 @@ function SimulatedCreditCardForm() {
           <form onSubmit={handleSubmit}>
             <Card className="w-96 p-7">
               <CardHeader>
-                <CardTitle>Información de Tarjeta de Crédito</CardTitle>
+                <CardTitle>Informacion de Tarjeta de Crdito</CardTitle>
               </CardHeader>
               { showExplanation ? <CardDescription >
                 Para completar tu registro y acceder a todas las funciones de
-                nuestra aplicación, es necesario ingresar los datos de tu
-                tarjeta de crédito. Esto es indispensable para realizar la
+                nuestra aplicacion, es necesario ingresar los datos de tu
+                tarjeta de crdito. Esto es indispensable para realizar la
                 compra de productos dentro de la plataforma. Aseguramos que tus
-                datos estarán completamente protegidos, y que solo se utilizarán
+                datos estarn completamente protegidos, y que solo se utilizarn
                 para procesar las transacciones de compra. Una vez ingresados
-                los datos, podrás disfrutar de todas las funcionalidades y
-                productos disponibles en nuestra aplicación de manera rápida y
+                los datos, podrs disfrutar de todas las funcionalidades y
+                productos disponibles en nuestra aplicacion de manera rpida y
                 segura. ¡Gracias por elegirnos!
               </CardDescription> : null }
               <p>-</p>

@@ -20,7 +20,7 @@ class CreditCardCreateView(APIView):
         # Crear el serializador con los datos de la solicitud
         serializer = CreditCardSerializer(data=data)
         if serializer.is_valid():
-            # Asignar `favourite` automáticamente sin depender de la solicitud
+            # Asignar `favourite` automticamente sin depender de la solicitud
             credit_card = serializer.save(user=request.user, favourite=favourite_value)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         
