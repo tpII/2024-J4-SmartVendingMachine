@@ -1,8 +1,6 @@
 from django.db import models
 from django.conf import settings
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-from django.core.exceptions import ValidationError
+
 
 class CreditCard(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='credit_cards')
@@ -15,5 +13,11 @@ class CreditCard(models.Model):
     def __str__(self):
         return f"{self.card_holder_name} - {self.card_number[-4:]}"
 
-# Signal to ensure at least one credit card is associated with each user
+class Compra(models.Model):
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="compras")
+    heladera = models.ForeignKey('fridge.Heladera', on_delete=models.CASCADE, related_name="compras")
+    tarjeta = models.ForeignKey(CreditCard, on_delete=models.SET_NULL, null=True, blank=True, related_name="compras")
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f"Compra #{self.id} por {self.usuario.username} el {self.fecha_creacion.strftime('%Y-%m-%d %H:%M:%S')}"
