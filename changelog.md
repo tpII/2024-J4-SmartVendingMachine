@@ -13,3 +13,8 @@ Tom 3-12:
         * Cree configuraciones para la descarga de archivos estaticos
         * Cree el modelo de compra dentro de CreditCards para guardarlas ahi.. tengo que terminar mas tarde la relacion con sesion compra.
         * Modifique el modelo de producto para almacenar la foto en la carpeta /media/productos/
+
+
+Licha/Eme 4-12:
+
+    ZMQ: Client levantado y andando --> Falta recibir mensaje de backend django

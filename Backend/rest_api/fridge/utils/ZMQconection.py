@@ -31,7 +31,10 @@ class ZMQConnection:
 
         :param message: Mensaje a enviar (string o bytes)
         :return: Respuesta recibida del servidor
+
+        
         """
+        
         try:
             self.socket.send_string(message) if isinstance(message, str) else self.socket.send(message)
             response = self.socket.recv_string()

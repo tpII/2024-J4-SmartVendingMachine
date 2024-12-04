@@ -4,7 +4,7 @@ from .serializers import *
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import permissions
-from .utils.ZMQconection import zmq_conection
+from .utils.ZMQconection import ZMQConnection
 
 # Esta vista devuelve los productos que estan almacenados en una heladera
 # en conjunto con su id, latitud y longitud.
@@ -20,13 +20,15 @@ class StartSessionView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, id):
+        ZMQ_conn = ZMQConnection()
+
         heladera = Heladera.objects.get(id=id)
         data = request.data.copy()
         data['heladera'] = heladera.id
         data['usuario'] = request.user.id
         
         #   ENVIO DE MENSAJE A LA RASPBERRY -------------------------
-        zmq_conection.send_message('iniciar')
+        ZMQ_conn.send_message('iniciar')
         # -----------------------------------------------------------
         
         serializer = SesionCompraSerializer(data=data)
