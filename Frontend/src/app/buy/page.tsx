@@ -42,6 +42,9 @@ function TwoButtonsPage() {
           <Card className="w-96 p-7">
             <CardHeader>
               <CardTitle>Gracias por su compra!</CardTitle>
+              <CardDescription>
+                Antes de pulsar finalizar la compra cierre la puerta.
+               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <Button
