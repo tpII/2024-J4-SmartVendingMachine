@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
-import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
+import React, { useEffect, useState } from "react";
+import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
+import Cookies from "js-cookie";
 
 const containerStyle = {
   width: "100%",
@@ -131,17 +132,56 @@ const mapOptions = {
 export function DarkModeMap() {
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
-    googleMapsApiKey: "AIzaSyC2XaW_3rmpdaqrgIgYHR67R1uFzMzMN_w",
+    googleMapsApiKey: "AIzaSyC2XaW_3rmpdaqrgIgYHR67R1uFzMzMN_w", // Coloca aquí tu API key
   });
 
-  const [map, setMap] = React.useState(null);
+  const [map, setMap] = useState(null);
+  const [markers, setMarkers] = useState([]); // Estado para almacenar las ubicaciones de las heladeras
 
-  const onLoad = React.useCallback(function callback(map) {
+  const onLoad = React.useCallback(function callback(map: any) {
     setMap(map);
   }, []);
 
-  const onUnmount = React.useCallback(function callback(map) {
+  const onUnmount = React.useCallback(function callback(map: any) {
     setMap(null);
+  }, []);
+
+  // Función para obtener las ubicaciones de las heladeras
+  const fetchHeladeras = async () => {
+    try {
+      const response = async () => {
+        try {
+          const res = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}market/fridge/geolocations/`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${Cookies.get("authToken")}`,
+              },
+            }
+          );
+          if (!res.ok) {
+            alert("Error al cargar tarjetas!");
+            return;
+          }
+          console.log("res", res)
+          const data = await res.json();
+          console.log("data", data);
+          setMarkers(Object.values(data)); // Almacena las ubicaciones en el estado
+        } catch (error) {
+          console.error("Error en la peticion:", error);
+        }
+      };
+
+    } catch (error) {
+      console.error("Error al obtener las ubicaciones de las heladeras:", error);
+    }
+  };
+
+  // Cargar las ubicaciones al montar el componente
+  useEffect(() => {
+    fetchHeladeras();
   }, []);
 
   return isLoaded ? (
@@ -151,7 +191,19 @@ export function DarkModeMap() {
       options={mapOptions}
       onLoad={onLoad}
       onUnmount={onUnmount}
-    ></GoogleMap>
+    >
+      {/* Renderizar marcadores */}
+      {markers.map((location: any, index) => (
+        <Marker
+          key={index}
+          position={{ lat: location.lat, lng: location.lng }}
+          icon={{
+            url: "/public/heladera.png", 
+            scaledSize: new window.google.maps.Size(40, 40), // Tamaño del icono
+          }}
+        />
+      ))}
+    </GoogleMap>
   ) : (
     <></>
   );

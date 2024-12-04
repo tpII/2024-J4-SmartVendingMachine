@@ -26,7 +26,7 @@ class StartSessionView(APIView):
         data['usuario'] = request.user.id
         
         #   ENVIO DE MENSAJE A LA RASPBERRY -------------------------
-        zmq_conection.send_message()
+        zmq_conection.send_message('iniciar')
         # -----------------------------------------------------------
         
         serializer = SesionCompraSerializer(data=data)

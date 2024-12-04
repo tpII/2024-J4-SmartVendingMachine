@@ -21,39 +21,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { QRScanner } from "@/components/ui/qrscanner";
-import { DarkModeMap } from "@/components/ui/darkmodemap";
 
-// Mock data for fo
-
-const foodItems = [
-  {
-    id: 1,
-    name: "Fresh Salad",
-    price: 8.99,
-    image: "/food-items/fresh_salad.jpg", // Ajustar extension si no la tiene
-  },
-  {
-    id: 2,
-    name: "Chicken Sandwich",
-    price: 10.99,
-    image: "/food-items/chicken_sandwich.jpeg",
-  },
-  {
-    id: 3,
-    name: "Fruit Bowl",
-    price: 6.99,
-    image: "/food-items/fruit_bowl.jpeg",
-  },
-  {
-    id: 4,
-    name: "Veggie Wrap",
-    price: 9.99,
-    image: "/food-items/veggie_wrap.jpg",
-  },
-];
 
 interface FoodItem {
-  id: number;
   name: string;
   price: number;
   image: string;
@@ -61,34 +31,62 @@ interface FoodItem {
 
 export default function SmartFridgeEcommerce() {
   const [activeTab, setActiveTab] = useState("browse");
+  const [foodItems, setFoodItems] = useState([]);
+
+  const checkUserCard = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}payment/check-card/`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${Cookies.get("authToken")}`, // Usa el token guardado en cookies
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Error en la respuesta de la API");
+      }
+
+      const data = await response.json();
+      if (!data.has_card) {
+        window.location.href = "/cards/add?homeRedirect=true";
+      } else {
+        console.error("El usuario tiene tarjeta...");
+      }
+    } catch (error) {
+      console.error("Error en la peticion", error);
+    }
+  };
+
+  const downloadProducts = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}market/fridge/1/products/list/`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${Cookies.get("authToken")}`, // Usa el token guardado en cookies
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Error en la respuesta de la API");
+      }
+      console.log(response)
+
+      const data = await response.json();
+      console.log(data)
+      setFoodItems(data)
+    } catch (error) {
+      console.error("Error en la peticion", error);
+    }
+  };
 
   useEffect(() => {
-    const checkUserCard = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}payment/check-card/`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${Cookies.get("authToken")}`, // Usa el token guardado en cookies
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        if (!response.ok) {
-          throw new Error("Error en la respuesta de la API");
-        }
-
-        const data = await response.json();
-        if (!data.has_card) {
-          window.location.href = "/cards/add?homeRedirect=true";
-        } else {
-          console.error("El usuario tiene tarjeta...");
-        }
-      } catch (error) {
-        console.error("Error en la peticion", error);
-      }
-    };
+    downloadProducts();
     checkUserCard();
   }, []);
 
@@ -129,15 +127,15 @@ export default function SmartFridgeEcommerce() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="browse">Menu</TabsTrigger>
-            <TabsTrigger value="qr-scanner">Scan QR</TabsTrigger>
-            <TabsTrigger value="map">Nearby Fridges</TabsTrigger>
+            <TabsTrigger value="history">Historial</TabsTrigger>
+            {/* <TabsTrigger value="map">Nearby Fridges</TabsTrigger> */}
           </TabsList>
           <TabsContent value="browse">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
-              {foodItems.map((item) => (
-                <Card key={item.id}>
+              {foodItems.map((item: any) => (
+                <Card key={item.name}>
                   <CardHeader>
                     <CardTitle>{item.name}</CardTitle>
                     <CardDescription>${item.price.toFixed(2)}</CardDescription>
@@ -166,7 +164,7 @@ export default function SmartFridgeEcommerce() {
               </CardContent>
             </Card>
           </TabsContent>
-          <TabsContent value="map">
+          {/* <TabsContent value="map">
             <Card>
               <CardHeader>
                 <CardTitle>Dark Mode Map</CardTitle>
@@ -178,7 +176,7 @@ export default function SmartFridgeEcommerce() {
                 <DarkModeMap />
               </CardContent>
             </Card>
-          </TabsContent>
+          </TabsContent> */}
         </Tabs>
       </main>
     </div>
