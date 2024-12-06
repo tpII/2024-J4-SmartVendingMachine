@@ -1,42 +1,33 @@
-
-
-
-#   DISCLAIMER:
-#       LA FUNCION DE RECEPCION ESTA MAL, LA TERMINO ESTA NOCHE
-#       AHORA NO SE QUEDA OSCIOSO ESPERANDO LOS MENSAJES SI NO QUE ES EVENT-DRIVEN
-#           .Tom
-
-
 import zmq
 from decouple import config
 
 class ZMQConnection:
     def __init__(self):
         """
-        inicializa la conexión ZMQ utilizando las variables de entorno definidas.
+        Inicializa la conexión ZMQ utilizando las variables de entorno definidas.
         """
         self.ip = config('ZMQ_IP', default='127.0.0.1')
         self.port = config('ZMQ_PORT', default='5555')
-        self.timeout = int(config('ZMQ_TIMEOUT', default='5000'))  # en milisegundos
 
+        # Crear contexto y socket ZMQ
         self.context = zmq.Context()
-        self.socket = self.context.socket(zmq.REQ)
+        self.socket = self.context.socket(zmq.REQ)  # Patrón REQ/REP
         self.socket.connect(f"tcp://{self.ip}:{self.port}")
-        self.socket.setsockopt(zmq.RCVTIMEO, self.timeout)
+
+        # Imprimir estado de la conexión
         print(f"Conectado a ZMQ en tcp://{self.ip}:{self.port}")
 
     def send_message(self, message):
         """
-        envia un mensaje a través de ZMQ.
+        Envía un mensaje a través de ZMQ.
 
         :param message: Mensaje a enviar (string o bytes)
         :return: Respuesta recibida del servidor
-
-        
         """
-        
         try:
+            # Enviar mensaje
             self.socket.send_string(message) if isinstance(message, str) else self.socket.send(message)
+            # Recibir respuesta
             response = self.socket.recv_string()
             return response
         except Exception as e:
@@ -44,22 +35,40 @@ class ZMQConnection:
 
     def receive_message(self):
         """
-        recibe un mensaje desde el servidor ZMQ.
+        Queda ocioso esperando un mensaje desde el servidor ZMQ.
 
-        :return: mensaje recibido (string)
+        :return: Mensaje recibido (string)
         """
         try:
+            print("Esperando mensaje...")
+            # Bloquea hasta recibir un mensaje
             message = self.socket.recv_string()
+            print(f"Mensaje recibido: {message}")
             return message
         except Exception as e:
             raise RuntimeError(f"Error al recibir mensaje: {e}")
 
     def close_connection(self):
         """
-        cierra la conexion ZMQ.
+        Cierra la conexión ZMQ.
         """
         self.socket.close()
         self.context.term()
         print("Conexión ZMQ cerrada.")
 
-zmq_conection = ZMQConnection()
+
+# Inicialización de la conexión ZMQ
+if __name__ == "__main__":
+    zmq_connection = ZMQConnection()
+
+    try:
+        # Ejemplo de enviar un mensaje
+        response = zmq_connection.send_message("Hola desde el cliente")
+        print(f"Respuesta recibida: {response}")
+
+        # Ejemplo de recibir un mensaje (bloqueante)
+        received_message = zmq_connection.receive_message()
+        print(f"Mensaje recibido: {received_message}")
+
+    finally:
+        zmq_connection.close_connection()
