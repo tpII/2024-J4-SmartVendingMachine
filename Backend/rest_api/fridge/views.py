@@ -6,66 +6,71 @@ from rest_framework.views import APIView
 from rest_framework import permissions
 from .utils.ZMQconection import ZMQConnection
 
-# Esta vista devuelve los productos que estan almacenados en una heladera
-# en conjunto con su id, latitud y longitud.
-#   .Tom
+# Instancia global de ZMQConnection
+zmq_connection = ZMQConnection()
+zmq_connection.start_listener()  # Inicia el listener para recibir mensajes
+
+# Vista para obtener detalles de una heladera
 class HeladeraDetailView(generics.RetrieveAPIView):
     queryset = Heladera.objects.all()
     serializer_class = HeladeraSerializer
 
-#  Esta vista crea un objeto "sesion" en la base de datos. Cada sesion es una sesion de compras
-#  a la cual se le asocia un usuario, una raspberry, uno/unos serie de productos. La sesion 
-#   .Tom
+# Vista para iniciar una sesión de compra
 class StartSessionView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, id):
-        ZMQ_conn = ZMQConnection()
-
+        # Conexión ZMQ para enviar mensajes
         heladera = Heladera.objects.get(id=id)
         data = request.data.copy()
         data['heladera'] = heladera.id
         data['usuario'] = request.user.id
         
-        #   ENVIO DE MENSAJE A LA RASPBERRY -------------------------
-        ZMQ_conn.send_message('iniciar')
-        # -----------------------------------------------------------
-        
+        # Enviar mensaje a la Raspberry
+        try:
+            zmq_connection.send_message('iniciar')
+        except RuntimeError as e:
+            return Response({"error": f"Error al enviar mensaje: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        # Serializar los datos de la sesión
         serializer = SesionCompraSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-#   Esta vista devuelve en formato de lista simple las heladeras con sus respectivas 
-#   ubicaciones en latitud y longitud
-#       .Tom
+# Vista para obtener los mensajes recibidos desde la Raspberry
+class ReceivedMessagesView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        """
+        Devuelve los mensajes recibidos desde la Raspberry.
+        """
+        messages = zmq_connection.get_received_messages()
+        return Response({"messages": messages}, status=status.HTTP_200_OK)
+
+# Vista para obtener las ubicaciones de las heladeras
 class UbicacionesHeladerasView(APIView):
-    permission_classes = [permissions.IsAuthenticated]  
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
         heladeras = Heladera.objects.all()
-        if not heladeras.exists():  # Verifica si no hay heladeras
+        if not heladeras.exists():
             return Response({"error": "No se encontraron heladeras."}, status=404)
 
-        payload_response = {}
-        for heladera in heladeras:
-            payload_response[heladera.id] = {
-                'lat': heladera.latitud,
-                'lng': heladera.longitud
-            }
-
+        payload_response = {
+            heladera.id: {'lat': heladera.latitud, 'lng': heladera.longitud}
+            for heladera in heladeras
+        }
         return Response(payload_response, status=200)
 
-#   Recibe como parametro el id de una heladera
-#   y descarga en formato de array los productos que hay en ella
-#       .Tom
+# Vista para obtener productos de una heladera
 class ProductListView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, heladera_id):
         try:
-            # Obtener la heladera por su ID
             heladera = Heladera.objects.get(id=heladera_id)
         except Heladera.DoesNotExist:
             return Response(
@@ -73,17 +78,13 @@ class ProductListView(APIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        # Obtener los productos relacionados con la heladera
         productos = Producto.objects.filter(heladera=heladera)
-
-        # Serializar los datos
         productos_data = [
             {
-                "name": producto.nombre, 
+                "name": producto.nombre,
                 "image": request.build_absolute_uri(producto.foto.url) if producto.foto else None,
                 "price": producto.precio
             }
             for producto in productos
         ]
-
         return Response(productos_data, status=status.HTTP_200_OK)
