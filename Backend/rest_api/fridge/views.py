@@ -8,7 +8,6 @@ from .utils.ZMQconection import ZMQConnection
 
 # Instancia global de ZMQConnection
 zmq_connection = ZMQConnection()
-zmq_connection.start_listener()  # Inicia el listener para recibir mensajes
 
 # Vista para obtener detalles de una heladera
 class HeladeraDetailView(generics.RetrieveAPIView):

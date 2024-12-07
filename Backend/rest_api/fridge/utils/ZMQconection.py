@@ -8,61 +8,49 @@ class ZMQConnection:
         """
         Inicializa la conexión ZMQ utilizando las variables de entorno definidas.
         """
-        # Configuración para envío de mensajes
-        self.send_ip = config('ZMQ_SEND_IP', default='127.0.0.1')
-        self.send_port = config('ZMQ_SEND_PORT', default='5555')  # Puerto para enviar
 
         # Configuración para recepción de mensajes
-        self.receive_ip = config('ZMQ_RECEIVE_IP', default='127.0.0.1')
-        self.receive_port = config('ZMQ_RECEIVE_PORT', default='5556')  # Puerto para recibir
-
-        # Contexto ZMQ
-        self.context = zmq.Context()
-
-        # Socket para enviar mensajes (REQ o PUSH)
-        self.send_socket = self.context.socket(zmq.REQ)
-        self.send_socket.connect(f"tcp://{self.send_ip}:{self.send_port}")
-        print(f"Socket de envío conectado a tcp://{self.send_ip}:{self.send_port}")
-
-        # Socket para recibir mensajes (PULL)
-        self.receive_socket = self.context.socket(zmq.PULL)
-        self.receive_socket.bind(f"tcp://{self.receive_ip}:{self.receive_port}")
-        print(f"Socket de recepción escuchando en tcp://{self.receive_ip}:{self.receive_port}")
-
         # Almacén de mensajes recibidos
         self.received_messages = []
 
         # Hilo para escuchar mensajes
         self.listener_thread = None
+        
 
     def send_message(self, message):
+        context = zmq.Context()
+        socket = context.socket(zmq.REQ)  # Socket REQ para enviar mensajes y recibir respuesta
+        socket.connect(f"tcp://127.0.0.1:5555")
         """
         Envía un mensaje a través del socket de envío.
         :param message: Mensaje a enviar (string o bytes).
         :return: Respuesta recibida (si aplica).
         """
         try:
-            self.send_socket.send_string(message) if isinstance(message, str) else self.send_socket.send(message)
-            response = self.send_socket.recv_string()
+            print(f"Enviando mensaje al cliente: {message}")
+            socket.send_string(message)  # Enviar mensaje al cliente
+
+            # Esperar respuesta del cliente
+            response = socket.recv_string()
+            self.received_messages.append(response)
+            print(f"Respuesta del cliente: {response}")
             return response
         except Exception as e:
-            raise RuntimeError(f"Error al enviar mensaje: {e}")
+            print(f"Error al comunicarse con el cliente: {e}")
+            return None
+        finally:
+            socket.close()
+            context.term()
 
-    def start_listener(self):
-        """
-        Inicia un hilo separado para escuchar mensajes de forma continua.
-        """
-        if self.listener_thread is None:
-            self.listener_thread = threading.Thread(target=self._listen_for_messages, daemon=True)
-            self.listener_thread.start()
+    
 
-    def _listen_for_messages(self):
+    def _listen_for_messages(self, m):
         """
         Método interno para recibir mensajes continuamente.
         """
         while True:
             try:
-                message = self.receive_socket.recv_string(flags=zmq.NOBLOCK)
+                message = self.recv_string(flags=zmq.NOBLOCK)
                 print(f"Mensaje recibido: {message}")
                 self.received_messages.append(message)
             except zmq.Again:
