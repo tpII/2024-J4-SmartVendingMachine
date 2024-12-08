@@ -71,3 +71,81 @@ class ZMQConnection:
         self.receive_socket.close()
         self.context.term()
         print("Conexión ZMQ cerrada.")
+
+
+
+###################################################################################################
+############################################ VERSION 2 ############################################
+###################################################################################################
+
+# Dejo este modulo por aqui, funciona para enviar y recibir mensajes de ambas partes
+# Lo unico el primero que envia el mensaje siempre es el backend. 
+class ZMQClient:
+    def __init__(self):
+        """
+        Inicializa las conexiones ZMQ leyendo las configuraciones desde las variables de entorno.
+        """
+        print("[INFO] Iniciando cliente ZMQ...")
+
+        # Leer configuraciones desde las variables de entorno
+        self.ZMQ_IP = config("ZMQ_IP", default="127.0.0.1")
+        self.ZMQ_PORT_PUSH = config("ZMQ_PORT_PUSH", cast=int, default=5555)  # Donde envía mensajes
+        self.ZMQ_PORT_PULL = config("ZMQ_PORT_PULL", cast=int, default=5556)  # Donde recibe mensajes
+        self.ZMQ_TIMEOUT = config("ZMQ_TIMEOUT", cast=int, default=5000)
+        print(f"[INFO] Configuración cargada: ZMQ_IP={self.ZMQ_IP}, "
+              f"ZMQ_PORT_PUSH={self.ZMQ_PORT_PUSH}, ZMQ_PORT_PULL={self.ZMQ_PORT_PULL}, ZMQ_TIMEOUT={self.ZMQ_TIMEOUT}")
+
+        # Crear contexto de ZMQ
+        self.context = zmq.Context()
+        print("[INFO] Contexto ZMQ creado.")
+
+        # Configurar socket PUSH para enviar mensajes
+        self.push_socket = self.context.socket(zmq.PUSH)
+        self.push_socket.connect(f"tcp://{self.ZMQ_IP}:{self.ZMQ_PORT_PUSH}")
+        print(f"[INFO] Socket PUSH conectado a tcp://{self.ZMQ_IP}:{self.ZMQ_PORT_PUSH}")
+
+        # Configurar socket PULL para recibir mensajes
+        self.pull_socket = self.context.socket(zmq.PULL)
+        self.pull_socket.connect(f"tcp://{self.ZMQ_IP}:{self.ZMQ_PORT_PULL}")
+        print(f"[INFO] Socket PULL conectado a tcp://{self.ZMQ_IP}:{self.ZMQ_PORT_PULL}")
+
+        # Iniciar hilo de recepción de mensajes
+        self.running = True
+        self.receive_thread = threading.Thread(target=self._receive_messages, daemon=True)
+        self.receive_thread.start()
+        print("[INFO] Hilo de recepción de mensajes iniciado.")
+
+    def send_message(self, message):
+        """
+        envia un mensaje a traves del socket push.
+        """
+        try:
+            print(f"[INFO] Enviando mensaje: {message}")
+            self.push_socket.send_string(message)  
+            print(f"[INFO] Mensaje enviado correctamente: {message}")
+        except zmq.ZMQError as e:
+            print(f"[ERROR] Error al enviar mensaje: {e}")
+
+    def _receive_messages(self):
+        """
+        Hilo dedicado a la recepcin de mensajes de manera no bloqueante.
+        """
+        print("[INFO] Iniciando recepcion de mensajes en segundo plano...")
+        while self.running:
+            try:
+                message = self.pull_socket.recv_string(flags=zmq.NOBLOCK)
+                print(f"[INFO] Mensaje recibido: {message}")
+            except zmq.Again:
+                pass
+
+    def close(self):
+        """
+        Cierra los sockets y el contexto de ZMQ.
+        """
+        print("[INFO] Cerrando cliente ZMQ...")
+        self.running = False
+        self.receive_thread.join()
+        self.push_socket.close()
+        self.pull_socket.close()
+        self.context.term()
+        print("[INFO] Cliente ZMQ cerrado correctamente.")

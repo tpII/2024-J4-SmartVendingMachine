@@ -4,10 +4,11 @@ from .serializers import *
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import permissions
-from .utils.ZMQconection import ZMQConnection
+from .utils.ZMQconection import ZMQConnection, ZMQClient
 
 # Instancia global de ZMQConnection
 zmq_connection = ZMQConnection()
+#zmq_client = ZMQClient()
 
 # Vista para obtener detalles de una heladera
 class HeladeraDetailView(generics.RetrieveAPIView):
