@@ -27,7 +27,7 @@ class SesionCompra(models.Model):
     estado = models.BooleanField(default=True)
     
     def __str__(self):
-        return f"Sesiin de compra {self.id} de {self.usuario.username} en Heladera {self.heladera.id}"
+        return f"Sesion de compra {self.id} de {self.usuario.username} en Heladera {self.heladera.id}"
 
 class ProductoCompra(models.Model):
     sesion = models.ForeignKey(SesionCompra, related_name='productos', on_delete=models.CASCADE)

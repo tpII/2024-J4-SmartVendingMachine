@@ -1,14 +1,18 @@
 import zmq
 from decouple import config
 import threading
+from ..models import SesionCompra
 
+class DatabaseHandling: 
+    def saveSessionProduct(product):
+        
+        return
 
 class ZMQConnection:
     def __init__(self):
         """
         Inicializa la conexión ZMQ utilizando las variables de entorno definidas.
         """
-
         # Configuración para recepción de mensajes
         # Almacén de mensajes recibidos
         self.received_messages = []
