@@ -1,6 +1,6 @@
-import zmq
+import zmq, threading, time
 from decouple import config
-import threading
+
 from ..models import SesionCompra
 
 class DatabaseHandling: 
@@ -129,6 +129,7 @@ class ZMQClient:
             print(f"[INFO] Mensaje enviado correctamente: {message}")
         except zmq.ZMQError as e:
             print(f"[ERROR] Error al enviar mensaje: {e}")
+            time.sleep(1)
 
     def _receive_messages(self):
         """

@@ -5,7 +5,7 @@ context = zmq.Context()
 
 # Socket para enviar mensajes a Dispositivo A
 sender = context.socket(zmq.PUSH)
-sender.connect("tcp://192.168.1.2:5556")  # Reemplaza <ip_dispositivo_A> con la IP del dispositivo A
+sender.connect("tcp://127.0.0.1:5556")  # Reemplaza <ip_dispositivo_A> con la IP del dispositivo A
 
 # Socket para recibir mensajes de Dispositivo A
 receiver = context.socket(zmq.PULL)

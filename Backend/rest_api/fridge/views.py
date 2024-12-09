@@ -7,8 +7,8 @@ from rest_framework import permissions
 from .utils.ZMQconection import ZMQConnection, ZMQClient
 
 # Instancia global de ZMQConnection
-zmq_connection = ZMQConnection()
-#zmq_client = ZMQClient()
+#zmq_connection = ZMQConnection()
+zmq_client = ZMQClient()
 
 # Vista para obtener detalles de una heladera
 class HeladeraDetailView(generics.RetrieveAPIView):
@@ -28,7 +28,7 @@ class StartSessionView(APIView):
         
         # Enviar mensaje a la Raspberry
         try:
-            zmq_connection.send_message('iniciar')
+            zmq_client.send_message('iniciar')
         except RuntimeError as e:
             return Response({"error": f"Error al enviar mensaje: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -47,7 +47,7 @@ class ReceivedMessagesView(APIView):
         """
         Devuelve los mensajes recibidos desde la Raspberry.
         """
-        messages = zmq_connection.get_received_messages()
+        messages = zmq_client.get_received_messages()
         return Response({"messages": messages}, status=status.HTTP_200_OK)
 
 # Vista para obtener las ubicaciones de las heladeras
