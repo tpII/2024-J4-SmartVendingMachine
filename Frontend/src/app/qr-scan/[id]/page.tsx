@@ -11,39 +11,43 @@ export default function QRScanPage() {
   const router = useRouter()
   const { id } = useParams()
   const [sessionStatus, setSessionStatus] = useState<'loading' | 'opened' | 'declined' | null>(null)
-
-  useEffect(() => {
+  const [requestSended, setRequestSended] = useState(false);
+  
+  const startSession = async () => {
     const sessionCookie = Cookies.get('authToken')
     if (!sessionCookie) {
       router.push('/login')
       return
     }
 
-    const startSession = async () => {
-      setSessionStatus('loading')
-      console.log(sessionCookie)
-      try {
-        const response = await fetch(`http://localhost:8000/market/fridge/start-session/${id}/`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${sessionCookie}`,
-            'Content-Type': 'application/json',
-          },
-        })
+    setSessionStatus('loading')
+    console.log(sessionCookie)
+    try {
+      const response = await fetch(`http://localhost:8000/market/fridge/start-session/${id}/`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${sessionCookie}`,
+          'Content-Type': 'application/json',
+        },
+      })
 
-        if (response.ok) {
-          setSessionStatus('opened')
-        } else {
-          setSessionStatus('declined')
-        }
-      } catch (error) {
-        console.error('Error starting session:', error)
+      if (response.ok) {
+        setSessionStatus('opened')
+      } else {
         setSessionStatus('declined')
       }
+    } catch (error) {
+      console.error('Error starting session:', error)
+      setSessionStatus('declined')
     }
-
-    startSession()
-  }, [id, router])
+  }
+  
+  useEffect(() => {
+    if (!requestSended) {
+      setRequestSended(true);
+      startSession();
+    }
+  }, [])
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -63,7 +67,8 @@ export default function QRScanPage() {
               <p className="text-green-600 font-semibold">Sesion abierta exitosamente!</p>
               <p className="font-light">La heladera esta abierta, ya puede retirar productos.</p>
               <p>ID de Heladera: {id}</p>
-              <Button onClick={() => router.push('/')}>Regresar al menu principal</Button>
+              <Button className='m-3' onClick={() => router.push('/')}>Finalizar compra</Button>
+              <Button className='m-3' onClick={() => router.push('/')}>Cancelar compra</Button>
             </div>
           )}
           {sessionStatus === 'declined' && (
