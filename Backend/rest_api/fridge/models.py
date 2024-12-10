@@ -11,12 +11,13 @@ class Heladera(models.Model):
         return f"Heladera {self.id}"
 
 class Producto(models.Model):
+    product_id = models.PositiveIntegerField()
     heladera = models.ForeignKey(Heladera, related_name='productos', on_delete=models.CASCADE)
     nombre = models.CharField(max_length=100)
     foto = models.ImageField(upload_to='media/productos/', blank=True, null=True)
     precio = models.DecimalField(max_digits=10, decimal_places=2)
     cantidad = models.PositiveIntegerField()
-
+    
     def __str__(self):
         return self.nombre
 

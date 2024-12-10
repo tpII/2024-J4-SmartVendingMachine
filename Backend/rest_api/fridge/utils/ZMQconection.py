@@ -82,6 +82,8 @@ class ZMQConnection:
 ############################################ VERSION 2 ############################################
 ###################################################################################################
 
+from .message_codec import MessageCodec
+
 # Dejo este modulo por aqui, funciona para enviar y recibir mensajes de ambas partes
 # Lo unico el primero que envia el mensaje siempre es el backend. 
 class ZMQClient:
@@ -113,11 +115,14 @@ class ZMQClient:
         self.pull_socket.connect(f"tcp://{self.ZMQ_IP}:{self.ZMQ_PORT_PULL}")
         print(f"[INFO] Socket PULL conectado a tcp://{self.ZMQ_IP}:{self.ZMQ_PORT_PULL}")
 
-        # Iniciar hilo de recepción de mensajes
-        self.running = True
-        self.receive_thread = threading.Thread(target=self._receive_messages, daemon=True)
-        self.receive_thread.start()
-        print("[INFO] Hilo de recepción de mensajes iniciado.")
+        # # Iniciar hilo de recepción de mensajes
+        # self.running = True
+        # self.receive_thread = threading.Thread(target=self._receive_messages, daemon=True)
+        # self.receive_thread.start()
+        # print("[INFO] Hilo de recepción de mensajes iniciado.")
+
+        # Configuramos el decodificador
+        self.codec = MessageCodec()
 
     def send_message(self, message):
         """
@@ -131,17 +136,31 @@ class ZMQClient:
             print(f"[ERROR] Error al enviar mensaje: {e}")
             time.sleep(1)
 
-    def _receive_messages(self):
+    def wait_for_message(self):
         """
-        Hilo dedicado a la recepcin de mensajes de manera no bloqueante.
+        Espera un mensaje bloqueando el flujo de ejecución.
         """
-        print("[INFO] Iniciando recepcion de mensajes en segundo plano...")
-        while self.running:
-            try:
-                message = self.pull_socket.recv_string(flags=zmq.NOBLOCK)
-                print(f"[INFO] Mensaje recibido: {message}")
-            except zmq.Again:
-                pass
+        print("[INFO] Esperando mensaje...")
+        try:
+            message = self.pull_socket.recv_string()
+            print(f"[INFO] Mensaje recibido: {message}")
+            return message
+        except zmq.ZMQError as e:
+            print(f"[ERROR] Error al recibir mensaje: {e}")
+            return None
+        
+    # def _receive_messages(self):
+    #     """
+    #     Hilo dedicado a la recepcin de mensajes de manera no bloqueante.
+    #     """
+    #     print("[INFO] Iniciando recepcion de mensajes en segundo plano...")
+    #     while self.running:
+    #         try:
+    #             message = self.pull_socket.recv_string(flags=zmq.NOBLOCK)
+    #             print(f"[INFO] Mensaje recibido: {message}")
+
+    #         except zmq.Again:
+    #             pass
 
     def close(self):
         """

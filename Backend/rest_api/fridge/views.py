@@ -5,10 +5,13 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import permissions
 from .utils.ZMQconection import ZMQConnection, ZMQClient
+from .utils.message_codec import MessageCodec
 
-# Instancia global de ZMQConnection
-#zmq_connection = ZMQConnection()
+# Instancia de ZMQConnection
 zmq_client = ZMQClient()
+
+# Instancia de Decodificador
+codec = MessageCodec()
 
 # Vista para obtener detalles de una heladera
 class HeladeraDetailView(generics.RetrieveAPIView):
@@ -88,6 +91,7 @@ class ProductListView(APIView):
             for producto in productos
         ]
         return Response(productos_data, status=status.HTTP_200_OK)
+
 class EndSessionView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -104,10 +108,18 @@ class EndSessionView(APIView):
         except RuntimeError as e:
             return Response({"error": f"Error al enviar mensaje: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+        try:
+            respuesta_rpi = zmq_client.wait_for_message()
+        except:
+            return Response({"error": f"Error al recibir el mensaje"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        # Decodificamos el mensaje
+        products = codec.decode(respuesta_rpi)
+        print(products)
+
         # Serializar los datos de la sesión
         serializer = SesionCompraSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-

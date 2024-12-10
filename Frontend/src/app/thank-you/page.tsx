@@ -23,21 +23,21 @@ import Link from "next/link";
 
 
 interface OrderItem {
-    id: number;
-    name: string;
-    price: number;
-    quantity: number;
-  }
-  
-  interface Order {
-    id: string;
-    date: string;
-    items: OrderItem[];
-    subtotal: number;
-    tax: number;
-    total: number;
-  }
-  
+  id: number;
+  name: string;
+  price: number;
+  quantity: number;
+}
+
+interface Order {
+  id: string;
+  date: string;
+  items: OrderItem[];
+  subtotal: number;
+  tax: number;
+  total: number;
+}
+
 
 const mockOrder: Order = {
   id: "1234567890",
@@ -55,12 +55,11 @@ export default function ThankYouPage() {
   const [order, setOrder] = useState<Order | null>(null);
 
   useEffect(() => {
-    // In a real app, you'd fetch the order details from your backend here
     setOrder(mockOrder);
   }, []);
 
   if (!order) {
-    return <div>Loading...</div>;
+    return <div>Cargando...</div>;
   }
 
   return (
@@ -69,27 +68,27 @@ export default function ThankYouPage() {
         <div className="text-center mb-8">
           <CheckCircle className="mx-auto h-16 w-16 text-green-500" />
           <h1 className="mt-4 text-3xl font-extrabold text-gray-900">
-            Thank you for your order!
+            Gracias por su compra
           </h1>
           <p className="mt-2 text-lg text-gray-600">
-            Your order has been placed and is being processed.
+            Su pedido ha sido realizado y está siendo procesado.
           </p>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>Order Summary</CardTitle>
+            <CardTitle>Resumen del Pedido</CardTitle>
             <CardDescription>
-              Order #{order.id} - Placed on {order.date}
+              Pedido #{order.id} - Realizado el {order.date}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Product</TableHead>
-                  <TableHead>Quantity</TableHead>
-                  <TableHead>Price</TableHead>
+                  <TableHead>Producto</TableHead>
+                  <TableHead>Cantidad</TableHead>
+                  <TableHead>Precio</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -110,7 +109,7 @@ export default function ThankYouPage() {
                 <span>${order.subtotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
-                <span>Tax:</span>
+                <span>Impuestos:</span>
                 <span>${order.tax.toFixed(2)}</span>
               </div>
               <div className="flex justify-between font-bold">
@@ -123,52 +122,11 @@ export default function ThankYouPage() {
             <Button asChild className="w-full">
               <Link href="/">
                 <ShoppingBag className="mr-2 h-4 w-4" />
-                Continue Shopping
+                Continuar Comprando
               </Link>
             </Button>
           </CardFooter>
         </Card>
-
-        <div className="mt-8 text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            What's Next?
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Order Confirmation</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p>
-                  You will receive an email confirmation with your order details
-                  shortly.
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle>Preparation</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p>
-                  Your items will be carefully prepared and placed in the smart
-                  fridge.
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle>Pick Up</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p>
-                  Use the provided code to unlock the smart fridge and retrieve
-                  your order.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
       </div>
     </div>
   );
