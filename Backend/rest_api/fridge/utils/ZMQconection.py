@@ -94,7 +94,7 @@ class ZMQClient:
         print("[INFO] Iniciando cliente ZMQ...")
 
         # Leer configuraciones desde las variables de entorno
-        self.ZMQ_IP = config("ZMQ_IP", default="127.0.0.1")
+        self.ZMQ_IP = config("ZMQ_IP", default="192.168.1.38")
         self.ZMQ_PORT_PUSH = config("ZMQ_PORT_PUSH", cast=int, default=5555)  # Donde envía mensajes
         self.ZMQ_PORT_PULL = config("ZMQ_PORT_PULL", cast=int, default=5556)  # Donde recibe mensajes
         self.ZMQ_TIMEOUT = config("ZMQ_TIMEOUT", cast=int, default=5000)
@@ -103,16 +103,20 @@ class ZMQClient:
 
         # Crear contexto de ZMQ
         self.context = zmq.Context()
+
         print("[INFO] Contexto ZMQ creado.")
+        sender = self.context.socket(zmq.PUSH)
+        sender.connect("tcp://192.168.1.38:5555")
 
         # Configurar socket PUSH para enviar mensajes
-        self.push_socket = self.context.socket(zmq.PUSH)
-        self.push_socket.connect(f"tcp://{self.ZMQ_IP}:{self.ZMQ_PORT_PUSH}")
+        #self.push_socket = self.context.socket(zmq.PUSH)
+        
+        #self.push_socket.connect("tcp://192.168.1.38:5555")
         print(f"[INFO] Socket PUSH conectado a tcp://{self.ZMQ_IP}:{self.ZMQ_PORT_PUSH}")
 
         # Configurar socket PULL para recibir mensajes
         self.pull_socket = self.context.socket(zmq.PULL)
-        self.pull_socket.connect(f"tcp://{self.ZMQ_IP}:{self.ZMQ_PORT_PULL}")
+        self.pull_socket.bind("tcp://*:5556")
         print(f"[INFO] Socket PULL conectado a tcp://{self.ZMQ_IP}:{self.ZMQ_PORT_PULL}")
 
         # # Iniciar hilo de recepción de mensajes
@@ -128,9 +132,11 @@ class ZMQClient:
         """
         envia un mensaje a traves del socket push.
         """
+        sender = self.context.socket(zmq.PUSH)
+        sender.connect("tcp://192.168.1.38:5555")
         try:
             print(f"[INFO] Enviando mensaje: {message}")
-            self.push_socket.send_string(message)  
+            sender.send_string(message)  
             print(f"[INFO] Mensaje enviado correctamente: {message}")
         except zmq.ZMQError as e:
             print(f"[ERROR] Error al enviar mensaje: {e}")

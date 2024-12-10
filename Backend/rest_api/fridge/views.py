@@ -31,7 +31,7 @@ class StartSessionView(APIView):
         
         # Enviar mensaje a la Raspberry
         try:
-            zmq_client.send_message('iniciar')
+            zmq_client.send_message('start')
         except RuntimeError as e:
             return Response({"error": f"Error al enviar mensaje: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -104,7 +104,7 @@ class EndSessionView(APIView):
         
         # Enviar mensaje a la Raspberry
         try:
-            zmq_client.send_message('Terminar')
+            zmq_client.send_message('stop')
         except RuntimeError as e:
             return Response({"error": f"Error al enviar mensaje: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
