@@ -122,7 +122,7 @@ export default function ThankYouPage() {
             <Button asChild className="w-full">
               <Link href="/">
                 <ShoppingBag className="mr-2 h-4 w-4" />
-                Continuar Comprando
+                Volver al menu
               </Link>
             </Button>
           </CardFooter>
