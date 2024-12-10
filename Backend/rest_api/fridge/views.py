@@ -10,6 +10,7 @@ from .utils.message_codec import MessageCodec
 # Instancia de ZMQConnection
 zmq_client = ZMQClient()
 
+products=""
 # Instancia de Decodificador
 codec = MessageCodec()
 
@@ -117,9 +118,41 @@ class EndSessionView(APIView):
         products = codec.decode(respuesta_rpi)
         print(products)
 
+        productos_info = {}
+        
+        try:
+            for name, cantidad_retirada in products.items():
+                # Buscar el producto por su nombre y asociarlo a la heladera
+                producto = Producto.objects.filter(nombre=name, heladera=1).first()
+                
+                if not producto:
+                    return Response(
+                        {"error": f"Producto '{name}' no encontrado en esta heladera."},
+                        status=status.HTTP_404_NOT_FOUND
+                    )
+                
+                productos_info[name] = {
+                    'precio': producto.precio,
+                    'stock_anterior': producto.cantidad,
+                    'cantidad_retirada': cantidad_retirada,
+                    'stock_actual': producto.cantidad - cantidad_retirada if producto.cantidad >= cantidad_retirada else 0
+                }
+                print(name)
+                print(productos_info[name])
+        except Exception as e:
+            return Response({"error": f"Error procesando productos: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+            
+
         # Serializar los datos de la sesión
         serializer = SesionCompraSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response({
+                    'sesion': serializer.data,
+                    'productos_info': productos_info
+                }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+    
+        
