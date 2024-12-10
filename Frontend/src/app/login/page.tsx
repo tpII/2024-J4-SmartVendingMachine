@@ -11,10 +11,15 @@ import {
 } from "@/components/ui/card";
 import { LogIn } from "lucide-react";
 import Cookies from "js-cookie";
+import { useSearchParams } from 'next/navigation';
 
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
+  const searchParams = useSearchParams();
+  const redirectStartSession = searchParams.get('redirectStartSession');
+
 
   const handleLogin = async () => {
     try {
@@ -40,7 +45,12 @@ export default function Login() {
         Cookies.set("authToken", data.access, { expires: 7 }); // La cookie expira en 7 días
         alert("Login exitoso!");
         console.log("Login exitoso");
-        window.location.href = "/";
+        console.log("redirectStartSession", redirectStartSession)
+        if (redirectStartSession) {
+          window.location.href = "/qr-scan/1";
+        } else {
+          window.location.href = "/";
+        }
       } else {
         console.error("Error en el login");
         alert("Hubo un error al iniciar sesión!");

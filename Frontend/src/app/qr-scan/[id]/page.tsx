@@ -25,14 +25,14 @@ export default function QRScanPage() {
   const startSession = async () => {
     const sessionCookie = Cookies.get('authToken')
     if (!sessionCookie) {
-      router.push('/login')
+      router.push('/login?redirectStartSession=true')
       return
     }
 
     setSessionStatus('loading-start-session')
     console.log(sessionCookie)
     try {
-      const response = await fetch(`http://localhost:8000/market/fridge/start-session/${id}/`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/market/fridge/start-session/${id}/`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${sessionCookie}`,
@@ -76,7 +76,7 @@ export default function QRScanPage() {
     setSessionStatus('loading-end-session')
 
     try {
-      const response = await fetch(`http://localhost:8000/market/fridge/end-session/${id}/`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/market/fridge/end-session/${id}/`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${sessionCookie}`,
@@ -87,8 +87,8 @@ export default function QRScanPage() {
       if (response.ok) {
         const responseData = await response.json()
         console.log(responseData)
-        //const queryString = new URLSearchParams({ data: JSON.stringify(responseData) }).toString()
-        //router.push(`/thank-you?${queryString}`)
+        const queryString = new URLSearchParams({ data: JSON.stringify(responseData) }).toString()
+        router.push(`/thank-you?${queryString}`)
       } else {
         setSessionStatus('declined')
       }
