@@ -88,3 +88,26 @@ class ProductListView(APIView):
             for producto in productos
         ]
         return Response(productos_data, status=status.HTTP_200_OK)
+class EndSessionView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, id):
+        # Conexión ZMQ para enviar mensajes
+        heladera = Heladera.objects.get(id=id)
+        data = request.data.copy()
+        data['heladera'] = heladera.id
+        data['usuario'] = request.user.id
+        
+        # Enviar mensaje a la Raspberry
+        try:
+            zmq_client.send_message('Terminar')
+        except RuntimeError as e:
+            return Response({"error": f"Error al enviar mensaje: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        # Serializar los datos de la sesión
+        serializer = SesionCompraSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
