@@ -14,10 +14,6 @@ import { useRouter } from "next/navigation";
 function TwoButtonsPage() {
   const router = useRouter();
 
-  const handleButton1Click = () => {
-    alert("¡Hiciste clic en el Botón 1!");
-    // Lógica adicional para este botón (redirigir, hacer un fetch, etc.)
-  };
 
   const handleButton2Click = () => {
     alert("¡Hiciste clic en el Botón 2!");
@@ -43,23 +39,16 @@ function TwoButtonsPage() {
             <CardHeader>
               <CardTitle>Gracias por su compra!</CardTitle>
               <CardDescription>
-                Antes de pulsar finalizar la compra cierre la puerta.
+                Antes de pulsar Finalizar Compra cierre la puerta.
                </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <Button
                 className="w-full"
-                onClick={handleButton1Click}
-                variant="default"
-              >
-                Cancelar
-              </Button>
-              <Button
-                className="w-full"
                 onClick={handleButton2Click}
                 variant="default"
               >
-                Finalizar
+                Finalizar Compra
               </Button>
             </CardContent>
           </Card>
