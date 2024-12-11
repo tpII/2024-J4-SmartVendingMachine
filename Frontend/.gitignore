@@ -53,3 +53,8 @@ buck-out/
 fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots
+
+.env
+.env.*
+Frontend/.env
+.env*.local

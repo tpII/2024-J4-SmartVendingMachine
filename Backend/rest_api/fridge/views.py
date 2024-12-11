@@ -145,15 +145,15 @@ class EndSessionView(APIView):
                         {"error": f"Producto '{name}' no encontrado en esta heladera."},
                         status=status.HTTP_404_NOT_FOUND
                     )
-                
-                productos_info[name] = {
-                    'precio': float(producto.precio),
-                    'stock_anterior': producto.cantidad,
-                    'cantidad_retirada': cantidad_retirada,
-                    'stock_actual': producto.cantidad - cantidad_retirada if producto.cantidad >= cantidad_retirada else 0
-                }
-                print(name)
-                print(productos_info[name])
+                if cantidad_retirada > 0:
+                    productos_info[name] = {
+                        'precio': float(producto.precio),
+                        'stock_anterior': producto.cantidad,
+                        'cantidad_retirada': cantidad_retirada,
+                        'stock_actual': producto.cantidad - cantidad_retirada if producto.cantidad >= cantidad_retirada else 0
+                    }
+                    print(name)
+                    print(productos_info[name])
         except Exception as e:
             return Response({"error": f"Error procesando productos: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
