@@ -109,6 +109,8 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
+SESSION_SAVE_EVERY_REQUEST = True  # Guarda la sesión en cada solicitud (asegura persistencia)
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {

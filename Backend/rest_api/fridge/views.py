@@ -96,6 +96,21 @@ class ProductListView(APIView):
 class EndSessionView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
+    def get(self, request, id):
+        try:
+            # Recuperar información de los productos desde la sesión
+            productos_info = request.session.get('productos_info', None)
+            print(productos_info)
+            if not productos_info:
+                return Response(
+                    {"error": "No se encontraron productos procesados para esta sesión."},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+            return Response({"productos_info": productos_info}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": f"Error al obtener los productos: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     def post(self, request, id):
         # Conexión ZMQ para enviar mensajes
         heladera = Heladera.objects.get(id=id)
@@ -132,7 +147,7 @@ class EndSessionView(APIView):
                     )
                 
                 productos_info[name] = {
-                    'precio': producto.precio,
+                    'precio': float(producto.precio),
                     'stock_anterior': producto.cantidad,
                     'cantidad_retirada': cantidad_retirada,
                     'stock_actual': producto.cantidad - cantidad_retirada if producto.cantidad >= cantidad_retirada else 0
@@ -142,7 +157,8 @@ class EndSessionView(APIView):
         except Exception as e:
             return Response({"error": f"Error procesando productos: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
-            
+        request.session['productos_info'] = productos_info
+        request.session.modified = True
 
         # Serializar los datos de la sesión
         serializer = SesionCompraSerializer(data=data)
@@ -153,6 +169,5 @@ class EndSessionView(APIView):
                     'productos_info': productos_info
                 }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
     
         
