@@ -19,8 +19,35 @@ export default function QRScanPage() {
   const router = useRouter()
   const { id } = useParams()
   const [sessionStatus, setSessionStatus] = useState<'loading-start-session' | 'loading-end-session' | 'opened' | 'declined' | null>(null)
-  const [requestSended, setRequestSended] = useState(false);
+  const [requestSended, setRequestSended] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const checkUserCard = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}payment/check-card/`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${Cookies.get("authToken")}`, // Usa el token guardado en cookies
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Error en la respuesta de la API");
+      }
+
+      const data = await response.json();
+      if (!data.has_card) {
+        window.location.href = "/cards/add?homeRedirect=true";
+      } else {
+        console.error("El usuario tiene tarjeta...");
+      }
+    } catch (error) {
+      console.error("Error en la peticion", error);
+    }
+  };
 
   const startSession = async () => {
     const sessionCookie = Cookies.get('authToken')
@@ -29,10 +56,13 @@ export default function QRScanPage() {
       return
     }
 
+    const handleAddCreditCard = () => {
+      window.location.href = "/cards";
+    };
+
     setSessionStatus('loading-start-session')
-    console.log(sessionCookie)
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/market/fridge/start-session/${id}/`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}market/fridge/start-session/1/`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${sessionCookie}`,
@@ -53,8 +83,9 @@ export default function QRScanPage() {
 
   useEffect(() => {
     if (!requestSended) {
-      setRequestSended(true);
-      startSession();
+      setRequestSended(true)
+      checkUserCard()
+      startSession()
     }
   }, [])
 
@@ -76,7 +107,7 @@ export default function QRScanPage() {
     setSessionStatus('loading-end-session')
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/market/fridge/end-session/${id}/`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}market/fridge/end-session/1/`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${sessionCookie}`,
@@ -87,8 +118,12 @@ export default function QRScanPage() {
       if (response.ok) {
         const responseData = await response.json()
         console.log(responseData)
-        const queryString = new URLSearchParams({ data: JSON.stringify(responseData) }).toString()
-        router.push(`/thank-you?${queryString}`)
+
+        // Almacenar los datos en localStorage
+        localStorage.setItem('productsInfo', JSON.stringify(responseData))
+
+        // Redirigir al usuario a la página de agradecimiento o resumen
+        router.push('/thank-you')
       } else {
         setSessionStatus('declined')
       }
@@ -105,12 +140,12 @@ export default function QRScanPage() {
           <CardTitle>Sesion de compra</CardTitle>
         </CardHeader>
         <CardContent>
-        {sessionStatus === 'loading-end-session' && (
-          <div className="flex flex-col items-center space-y-4">
-            <Loader2 className="h-8 w-8 animate-spin" />
-            <p>Procesando...</p>
-          </div>
-        )}
+          {sessionStatus === 'loading-end-session' && (
+            <div className="flex flex-col items-center space-y-4">
+              <Loader2 className="h-8 w-8 animate-spin" />
+              <p>Procesando...</p>
+            </div>
+          )}
           {sessionStatus === 'loading-start-session' && (
             <div className="flex flex-col items-center space-y-4">
               <Loader2 className="h-8 w-8 animate-spin" />
@@ -123,7 +158,6 @@ export default function QRScanPage() {
               <p className="font-light">La heladera esta abierta, ya puede retirar productos.</p>
               <p>ID de Heladera: {id}</p>
               <Button className='m-3' onClick={openModal}>Finalizar compra</Button>
-              {/* <Button className='m-3' onClick={() => router.push('/')}>Cancelar compra</Button> */}
             </div>
           )}
           {sessionStatus === 'declined' && (

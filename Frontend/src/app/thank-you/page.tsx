@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -18,47 +18,45 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { CheckCircle, ArrowRight, ShoppingBag } from "lucide-react";
+import { CheckCircle, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 
-
-interface OrderItem {
-  id: number;
-  name: string;
-  price: number;
-  quantity: number;
+interface ProductDetails {
+  precio: number;
+  stock_anterior: number;
+  cantidad_retirada: number;
+  stock_actual: number;
 }
 
-interface Order {
-  id: string;
-  date: string;
-  items: OrderItem[];
-  subtotal: number;
-  tax: number;
-  total: number;
+interface ProductosInfo {
+  [productName: string]: ProductDetails;
 }
 
+interface ProductsResponse {
+  productos_info: ProductosInfo;
+}
 
-const mockOrder: Order = {
-  id: "1234567890",
-  date: new Date().toLocaleDateString(),
-  items: [
-    { id: 1, name: "Fresh Salad", price: 8.99, quantity: 2 },
-    { id: 2, name: "Chicken Sandwich", price: 10.99, quantity: 1 },
-  ],
-  subtotal: 28.97,
-  tax: 2.9,
-  total: 31.87,
+const productNameMapping: Record<string, string> = {
+  "oreo": "Oreo",
+  "coca-cola": "Coca-Cola Original",
+  "lays": "Lay's",
 };
 
 export default function ThankYouPage() {
-  const [order, setOrder] = useState<Order | null>(null);
+  const [productsInfo, setProductsInfo] = useState<ProductsResponse | null>(null);
 
   useEffect(() => {
-    setOrder(mockOrder);
+    try {
+      const data = localStorage.getItem("productsInfo");
+      if (data) {
+        setProductsInfo(JSON.parse(data));
+      }
+    } catch (error) {
+      console.error("Error al cargar los datos del localStorage:", error);
+    }
   }, []);
 
-  if (!order) {
+  if (!productsInfo) {
     return <div>Cargando...</div>;
   }
 
@@ -71,15 +69,15 @@ export default function ThankYouPage() {
             Gracias por su compra
           </h1>
           <p className="mt-2 text-lg text-gray-600">
-            Su pedido ha sido realizado y está siendo procesado.
+            Su transacción ha sido realizada exitosamente.
           </p>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>Resumen del Pedido</CardTitle>
+            <CardTitle>Resumen de Productos</CardTitle>
             <CardDescription>
-              Pedido #{order.id} - Realizado el {order.date}
+              Detalles de los productos retirados de la heladera.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -87,42 +85,32 @@ export default function ThankYouPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Producto</TableHead>
-                  <TableHead>Cantidad</TableHead>
                   <TableHead>Precio</TableHead>
+                  <TableHead>Cantidad Retirada</TableHead>
+                  <TableHead>Stock Anterior</TableHead>
+                  <TableHead>Stock Actual</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {order.items.map((item: any) => (
-                  <TableRow key={item.id}>
-                    <TableCell>{item.name}</TableCell>
-                    <TableCell>{item.quantity}</TableCell>
-                    <TableCell>
-                      ${(item.price * item.quantity).toFixed(2)}
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {Object.entries(productsInfo.productos_info).map(
+                  ([productName, details], index) => (
+                    <TableRow key={index}>
+                      <TableCell>{productNameMapping[productName] || productName}</TableCell>
+                      <TableCell>${details.precio.toFixed(2)}</TableCell>
+                      <TableCell>{details.cantidad_retirada}</TableCell>
+                      <TableCell>{details.stock_anterior}</TableCell>
+                      <TableCell>{details.stock_actual}</TableCell>
+                    </TableRow>
+                  )
+                )}
               </TableBody>
             </Table>
-            <div className="mt-4 space-y-2">
-              <div className="flex justify-between">
-                <span>Subtotal:</span>
-                <span>${order.subtotal.toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Impuestos:</span>
-                <span>${order.tax.toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between font-bold">
-                <span>Total:</span>
-                <span>${order.total.toFixed(2)}</span>
-              </div>
-            </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
             <Button asChild className="w-full">
               <Link href="/">
                 <ShoppingBag className="mr-2 h-4 w-4" />
-                Volver al menu
+                Volver al menú
               </Link>
             </Button>
           </CardFooter>

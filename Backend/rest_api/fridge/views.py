@@ -96,21 +96,6 @@ class ProductListView(APIView):
 class EndSessionView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def get(self, request, id):
-        try:
-            # Recuperar información de los productos desde la sesión
-            productos_info = request.session.get('productos_info', None)
-            print(productos_info)
-            if not productos_info:
-                return Response(
-                    {"error": "No se encontraron productos procesados para esta sesión."},
-                    status=status.HTTP_404_NOT_FOUND
-                )
-
-            return Response({"productos_info": productos_info}, status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response({"error": f"Error al obtener los productos: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
     def post(self, request, id):
         # Conexión ZMQ para enviar mensajes
         heladera = Heladera.objects.get(id=id)
