@@ -62,7 +62,11 @@ export default function Login() {
   };
 
   const handleSignUpEvent = () => {
-    window.location.href = "/sign-up";
+    if (redirectStartSession) {
+      window.location.href = "/sign-up?redirectStartSession=true";
+    } else {
+      window.location.href = "/sign-up";
+    }
   };
 
   return (

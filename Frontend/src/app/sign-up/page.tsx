@@ -11,13 +11,15 @@ import {
 } from "@/components/ui/card";
 import { LogIn } from "lucide-react";
 import Cookies from "js-cookie";
+import { useSearchParams } from "next/navigation";
 
 export default function Login() {
-  const [password2, setPassword2] = useState("");
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
-  const [phonenumber, setPhonenumber] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [password2, setPassword2] = useState("");
+  
+  const searchParams = useSearchParams();
+  const redirectStartSession = searchParams.get('redirectStartSession');
 
   const handleLogin = async () => {
     if (password != password2) {
@@ -47,7 +49,11 @@ export default function Login() {
         // Supongamos que el token est en data.token
         Cookies.set("authToken", data.token, { expires: 7 }); // La cookie expira en 7 das
         alert("Sign up exitoso, puede iniciar sesion!");
-        window.location.href = "/login";
+        if (redirectStartSession) {
+          window.location.href = "/login?redirectStartSession=true";
+        } else { 
+          window.location.href = "/login";
+        }
         console.log("Sign up exitoso");
       } else {
         alert("Error en el sign up");

@@ -9,18 +9,11 @@ import {
   CardTitle,
   CardFooter,
 } from "@/components/ui/card";
-import { Trash2, User } from "lucide-react";
+import { User } from "lucide-react";
 import Cookies from "js-cookie";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { QRScanner } from "@/components/ui/qrscanner";
+import { useSearchParams } from "next/navigation";
 
 
 interface FoodItem {
@@ -32,6 +25,9 @@ interface FoodItem {
 export default function SmartFridgeEcommerce() {
   const [activeTab, setActiveTab] = useState("browse");
   const [foodItems, setFoodItems] = useState([]);
+
+  const searchParams = useSearchParams();
+  const redirectStartSession = searchParams.get('redirectStartSession');
 
   const checkUserCard = async () => {
     try {
@@ -51,7 +47,11 @@ export default function SmartFridgeEcommerce() {
 
       const data = await response.json();
       if (!data.has_card) {
-        window.location.href = "/cards/add?homeRedirect=true";
+        if (redirectStartSession) {
+          window.location.href = "/cards/add?homeRedirect=true&redirectStartSession=true";
+        } else {
+          window.location.href = "/cards/add?homeRedirect=true";
+        }
       } else {
         console.error("El usuario tiene tarjeta...");
       }

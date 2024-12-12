@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Cookies from "js-cookie";
 import { User } from "lucide-react";
 
@@ -22,6 +22,9 @@ function SimulatedCreditCardForm() {
     cvv: "",
   });
   const [showExplanation, setShowExplanation] = useState(false)
+
+  const searchParams = useSearchParams();
+  const redirectStartSession = searchParams.get('redirectStartSession');
 
   // Si se redirige desde el home, significa que el usuario recien crea su cuenta y todavia no tiene 
   // una tarjeta cargada, por lo que mostramos un mensaje explicativo
@@ -95,7 +98,11 @@ function SimulatedCreditCardForm() {
 
       if (response.ok) {
         alert("Tarjeta registrada exitosamente");
-        router.push("/cards"); // Redirige al login despus de registrar la tarjeta
+        if (redirectStartSession) {
+          window.location.href = "/qr-scan/1";
+        } else {
+          router.push("/cards"); // Redirige al login despus de registrar la tarjeta
+        }
       } else {
         const errorData = await response.json();
         console.error("Error al registrar la tarjeta:", errorData);

@@ -24,26 +24,32 @@ export default function QRScanPage() {
 
   const checkUserCard = async () => {
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}payment/check-card/`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${Cookies.get("authToken")}`, // Usa el token guardado en cookies
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      if (!response.ok) {
-        throw new Error("Error en la respuesta de la API");
-      }
-
-      const data = await response.json();
-      if (!data.has_card) {
-        window.location.href = "/cards/add?homeRedirect=true";
+      const sessionCookie = Cookies.get('authToken')
+      if (!sessionCookie) {
+        router.push('/login?redirectStartSession=true')
+        return
       } else {
-        startSession();
-        console.error("El usuario tiene tarjeta...");
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}payment/check-card/`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${Cookies.get("authToken")}`, // Usa el token guardado en cookies
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (!response.ok) {
+          throw new Error("Error en la respuesta de la API");
+        }
+  
+        const data = await response.json();
+        if (!data.has_card) {
+          window.location.href = "/cards/add?homeRedirect=true?redirectStartSession=true";
+        } else {
+          console.error("El usuario tiene tarjeta...");
+          startSession();
+        }
       }
     } catch (error) {
       console.error("Error en la peticion", error);
@@ -52,10 +58,6 @@ export default function QRScanPage() {
 
   const startSession = async () => {
     const sessionCookie = Cookies.get('authToken')
-    if (!sessionCookie) {
-      router.push('/login?redirectStartSession=true')
-      return
-    }
 
     const handleAddCreditCard = () => {
       window.location.href = "/cards";
