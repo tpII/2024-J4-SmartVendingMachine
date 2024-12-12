@@ -50,7 +50,7 @@ export default function Login() {
         Cookies.set("authToken", data.token, { expires: 7 }); // La cookie expira en 7 das
         alert("Sign up exitoso, puede iniciar sesion!");
         if (redirectStartSession) {
-          window.location.href = "/login?redirectStartSession=true";
+          window.location.href = "/login?redirectStartSession=truew";
         } else { 
           window.location.href = "/login";
         }
