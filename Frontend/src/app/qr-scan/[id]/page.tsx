@@ -42,6 +42,7 @@ export default function QRScanPage() {
       if (!data.has_card) {
         window.location.href = "/cards/add?homeRedirect=true";
       } else {
+        startSession();
         console.error("El usuario tiene tarjeta...");
       }
     } catch (error) {
@@ -84,8 +85,7 @@ export default function QRScanPage() {
   useEffect(() => {
     if (!requestSended) {
       setRequestSended(true)
-      checkUserCard()
-      startSession()
+      checkUserCard();
     }
   }, [])
 
