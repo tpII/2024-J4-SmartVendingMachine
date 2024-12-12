@@ -99,7 +99,7 @@ function SimulatedCreditCardForm() {
       if (response.ok) {
         alert("Tarjeta registrada exitosamente");
         if (redirectStartSession) {
-          window.location.href = "/qr-scan/1";
+          router.push("/qr-scan/1");
         } else {
           router.push("/cards"); // Redirige al login despus de registrar la tarjeta
         }
