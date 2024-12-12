@@ -94,7 +94,7 @@ class ZMQClient:
         print("[INFO] Iniciando cliente ZMQ...")
 
         # Leer configuraciones desde las variables de entorno
-        self.ZMQ_IP = config("ZMQ_IP", default="192.168.1.38")
+        self.ZMQ_IP = config("ZMQ_IP", default="192.168.1.115")
         self.ZMQ_PORT_PUSH = config("ZMQ_PORT_PUSH", cast=int, default=5555)  # Donde envía mensajes
         self.ZMQ_PORT_PULL = config("ZMQ_PORT_PULL", cast=int, default=5556)  # Donde recibe mensajes
         self.ZMQ_TIMEOUT = config("ZMQ_TIMEOUT", cast=int, default=5000)
@@ -106,12 +106,12 @@ class ZMQClient:
 
         print("[INFO] Contexto ZMQ creado.")
         sender = self.context.socket(zmq.PUSH)
-        sender.connect("tcp://192.168.1.38:5555")
+        sender.connect("tcp://192.168.1.115:5555")
 
         # Configurar socket PUSH para enviar mensajes
         #self.push_socket = self.context.socket(zmq.PUSH)
         
-        #self.push_socket.connect("tcp://192.168.1.38:5555")
+        #self.push_socket.connect("tcp://192.168.1.115:5555")
         print(f"[INFO] Socket PUSH conectado a tcp://{self.ZMQ_IP}:{self.ZMQ_PORT_PUSH}")
 
         # Configurar socket PULL para recibir mensajes
@@ -133,7 +133,7 @@ class ZMQClient:
         envia un mensaje a traves del socket push.
         """
         sender = self.context.socket(zmq.PUSH)
-        sender.connect("tcp://192.168.1.38:5555")
+        sender.connect("tcp://192.168.1.115:5555")
         try:
             print(f"[INFO] Enviando mensaje: {message}")
             sender.send_string(message)  
