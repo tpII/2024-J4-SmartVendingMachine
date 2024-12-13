@@ -1,0 +1,3 @@
+Invalid category index 3119. Check your classes.txt.
+Invalid category index 14729. Check your classes.txt.
+Invalid category index 3039. Check your classes.txt.
